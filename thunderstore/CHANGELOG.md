@@ -1,3 +1,7 @@
+# 1.8.0
+
+- `mute` list: names that are silenced entirely — no replacement, no track start. Useful when a sound must vanish but must not retrigger music (e.g. money-bag impacts after the track already started).
+
 # 1.7.0
 
 - `lowPassHz`: high-frequency rolloff so a track sounds muffled like the game's own audio.

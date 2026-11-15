@@ -14,7 +14,7 @@
 ![R.E.P.O.](https://img.shields.io/badge/R.E.P.O.-Unity%202022.3-FF7A45)
 ![Windows](https://img.shields.io/badge/Windows-x64-0EA5E9?logo=windows&logoColor=white)
 [![Release](https://img.shields.io/github/v/release/noxorzzz/soundreplacer-repo?label=release&color=3DDC97)](https://github.com/noxorzzz/soundreplacer-repo/releases/latest)
-[![Thunderstore](https://img.shields.io/badge/Thunderstore-1.7.0-23A2C4)](https://thunderstore.io/c/repo/p/noxorzzz/SoundReplacer/)
+[![Thunderstore](https://img.shields.io/badge/Thunderstore-1.8.0-23A2C4)](https://thunderstore.io/c/repo/p/noxorzzz/SoundReplacer/)
 
 </div>
 
@@ -322,6 +322,7 @@ dotnet publish .\app\SoundReplacer.App.csproj -c Release -r win-x64 -p:SelfConta
   "echoDryMix": 1.0,
   "lowPassHz": 7000,
   "reverbPreset": "Room",
+  "mute": ["Surplus Valuable - Big - Impact - Heavy01"],
   "sounds": {
     "Sfx - Item Break": "Sounds/Sfx_Item_Break_1a2b3c4d5e6f7a8b.ogg",
     "Music - Menu": "Sounds/Music_Menu_9f8e7d6c5b4a3921.wav",
@@ -355,6 +356,7 @@ dotnet publish .\app\SoundReplacer.App.csproj -c Release -r win-x64 -p:SelfConta
 | `echoDryMix` | number | `1.0` | доля сухого сигнала |
 | `lowPassHz` | number | `0` | срез высоких частот: глухой звук «из бетонного бункера» (0 — выключено) |
 | `reverbPreset` | string | `""` | реверберация Unity: `Room`, `Hall`, `Cave`… пусто — выключено |
+| `mute` | array | `[]` | имена, которые просто глушатся: без замены и без запуска трека (например, удары мешка, чтобы трек не начинался заново при касании) |
 | `sounds` | object | `{}` | маппинг `точное имя AudioClip → путь к .ogg/.wav` |
 
 Правила:

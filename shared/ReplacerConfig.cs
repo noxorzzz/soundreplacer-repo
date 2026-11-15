@@ -93,6 +93,12 @@ namespace SoundReplacer.Shared
         /// <summary>Пресет реверберации Unity: Room, Hall, Cave, Off и т.д. Пусто — выключено.</summary>
         public string ReverbPreset { get; set; }
 
+        /// <summary>
+        /// Имена, которые просто глушатся: без замены и без запуска трека.
+        /// Например, звуки удара мешка после того, как трек уже играет.
+        /// </summary>
+        public List<string> Mute { get; private set; }
+
         public Dictionary<string, string> Sounds { get; private set; }
 
         public ReplacerConfig()
@@ -120,6 +126,7 @@ namespace SoundReplacer.Shared
             EchoDryMix = 1.0;
             LowPassHz = 0.0;
             ReverbPreset = string.Empty;
+            Mute = new List<string>();
             Sounds = new Dictionary<string, string>(StringComparer.Ordinal);
         }
 
@@ -149,6 +156,10 @@ namespace SoundReplacer.Shared
             root["echoDryMix"] = EchoDryMix;
             root["lowPassHz"] = LowPassHz;
             root["reverbPreset"] = ReverbPreset;
+
+            var mute = new List<object>(Mute.Count);
+            foreach (string name in Mute) mute.Add(name);
+            root["mute"] = mute;
 
             var noTrim = new List<object>(NoTrim.Count);
             foreach (string name in NoTrim) noTrim.Add(name);
@@ -204,6 +215,16 @@ namespace SoundReplacer.Shared
             config.EchoDryMix = Json.GetDouble(obj, "echoDryMix", 1.0);
             config.LowPassHz = Json.GetDouble(obj, "lowPassHz", 0.0);
             config.ReverbPreset = (Json.Get(obj, "reverbPreset") as string ?? string.Empty).Trim();
+
+            var rawMute = Json.AsArray(Json.Get(obj, "mute"));
+            if (rawMute != null)
+            {
+                foreach (object item in rawMute)
+                {
+                    var name = item as string;
+                    if (!string.IsNullOrEmpty(name)) config.Mute.Add(name.Trim());
+                }
+            }
 
             var rawNoTrim = Json.AsArray(Json.Get(obj, "noTrim"));
             if (rawNoTrim != null)

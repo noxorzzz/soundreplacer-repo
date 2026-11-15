@@ -59,6 +59,7 @@ internal static class Smoke
         config.EchoDryMix = 0.9;
         config.LowPassHz = 6500;
         config.ReverbPreset = "Room";
+        config.Mute.Add("Surplus Valuable - Big - Break - Heavy02");
 
         string error;
         ReplacerConfig parsed = ReplacerConfig.FromJson(config.ToJson(), out error);
@@ -90,6 +91,7 @@ internal static class Smoke
         Check(Math.Abs(parsed.EchoDryMix - 0.9) < 0.001, "config echoDryMix");
         Check(Math.Abs(parsed.LowPassHz - 6500) < 0.001, "config lowPassHz");
         Check(parsed.ReverbPreset == "Room", "config reverbPreset");
+        Check(parsed.Mute.Count == 1 && parsed.Mute[0] == "Surplus Valuable - Big - Break - Heavy02", "config mute");
     }
 
     private static void CatalogRoundTrip()

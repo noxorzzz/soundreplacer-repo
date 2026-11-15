@@ -155,6 +155,12 @@ namespace SoundReplacer.Audio
                 SoundReplacementManager manager = Manager;
                 if (manager == null) return true;
 
+                if (current != null && manager.IsMuted(current.name))
+                {
+                    ModLog.Debug("звук '" + current.name + "' заглушён (mute)");
+                    return false;
+                }
+
                 AudioClip replacement;
                 if (!manager.TryGet(current, out replacement)) return true;
 
@@ -183,6 +189,12 @@ namespace SoundReplacer.Audio
 
                 SoundReplacementManager manager = Manager;
                 if (manager == null) return true;
+
+                if (manager.IsMuted(clip.name))
+                {
+                    ModLog.Debug("звук '" + clip.name + "' заглушён (mute)");
+                    return false;
+                }
 
                 AudioClip replacement;
                 if (!manager.TryGet(clip, out replacement)) return true;

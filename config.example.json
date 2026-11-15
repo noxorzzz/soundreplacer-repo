@@ -24,6 +24,7 @@
   "echoDryMix": 1.0,
   "lowPassHz": 7000,
   "reverbPreset": "Room",
+  "mute": ["Surplus Valuable - Big - Impact - Heavy01"],
   "sounds": {
     "Sfx - Item Break": "Sounds/Sfx_Item_Break_1a2b3c4d5e6f7a8b.ogg",
     "Music - Menu": "Sounds/Music_Menu_9f8e7d6c5b4a3921.wav"

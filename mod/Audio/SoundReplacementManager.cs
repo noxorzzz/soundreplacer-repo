@@ -189,6 +189,18 @@ namespace SoundReplacer.Audio
             return false;
         }
 
+        /// <summary>Этот звук надо просто заглушить: ни замены, ни запуска трека.</summary>
+        public bool IsMuted(string name)
+        {
+            if (string.IsNullOrEmpty(name) || _config.Mute.Count == 0) return false;
+
+            for (int i = 0; i < _config.Mute.Count; i++)
+            {
+                if (string.Equals(_config.Mute[i], name, StringComparison.OrdinalIgnoreCase)) return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Подмена при присвоении клипа (set_clip): окно повторов здесь не расходуется,
         /// иначе первое же Play() после set_clip было бы заглушено.

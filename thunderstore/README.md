@@ -16,6 +16,7 @@ Client-side BepInEx 5 + Harmony mod: it swaps the `AudioClip` by name at play ti
 - `spatial`: the track plays on its own 3D source at the event position — louder up close, quieter with distance (`minDistance`, `maxDistance`, `trackVolume`). It is unaffected by the game re-triggering the original sound.
 - `echo`: optional `AudioEchoFilter` on that source (`echoDelayMs`, `echoDecayRatio`, `echoWetMix`, `echoDryMix`) — the track gets an echo tail, other sounds stay untouched.
 - `lowPassHz` + `reverbPreset`: muffled, concrete-room sound matching the game — high-frequency rolloff and Unity reverb (`Room` by default in the example).
+- `mute`: names silenced completely — no replacement, no track start (stops a sound from re-triggering music).
 - `logPlays`: every played clip appears in the log with its length and channel count.
 - `catalog.json` with real clip names, play counts, original `length` and `channels`, updated while you play.
 - Own log with rotation plus `BepInEx/LogOutput.log`.
