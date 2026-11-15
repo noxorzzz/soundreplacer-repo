@@ -48,6 +48,8 @@ namespace SoundReplacer.Shared
                 var item = new Dictionary<string, object>(StringComparer.Ordinal);
                 item["name"] = entry.Name;
                 item["plays"] = entry.Plays;
+                item["length"] = entry.Length;
+                item["channels"] = entry.Channels;
                 item["lastSeenUtc"] = entry.LastSeenUtc ?? string.Empty;
                 sounds.Add(item);
             }
@@ -97,6 +99,8 @@ namespace SoundReplacer.Shared
                     {
                         Name = name,
                         Plays = Json.GetInt(item, "plays", 0),
+                        Length = (float)Json.GetDouble(item, "length", 0.0),
+                        Channels = Json.GetInt(item, "channels", 0),
                         LastSeenUtc = Json.GetString(item, "lastSeenUtc", string.Empty)
                     });
                 }
@@ -175,6 +179,13 @@ namespace SoundReplacer.Shared
     {
         public string Name { get; set; }
         public int Plays { get; set; }
+
+        /// <summary>Длительность оригинала в секундах (0 — неизвестна: старый каталог).</summary>
+        public float Length { get; set; }
+
+        /// <summary>Каналов в оригинале: 1 (моно, 3D) или 2 (стерео, музыка/UI).</summary>
+        public int Channels { get; set; }
+
         public string LastSeenUtc { get; set; }
     }
 }

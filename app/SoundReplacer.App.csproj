@@ -25,7 +25,7 @@
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <Product>SoundReplacer</Product>
     <AssemblyTitle>SoundReplacer — замена звуков R.E.P.O.</AssemblyTitle>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <!-- Общий слой с модом: тот же config.json/catalog.json и тот же JSON-парсер. -->

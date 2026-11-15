@@ -117,6 +117,20 @@ namespace SoundReplacer.Shared
             }
         }
 
+        public static double GetDouble(IDictionary<string, object> obj, string key, double fallback)
+        {
+            object value = Get(obj, key);
+            if (value == null) return fallback;
+            try
+            {
+                return Convert.ToDouble(value, CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                return fallback;
+            }
+        }
+
         // ---------------------------------------------------------------- writer
 
         private static void WriteValue(StringBuilder sb, object value, bool pretty, int depth)

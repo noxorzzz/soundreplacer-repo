@@ -28,6 +28,8 @@ namespace SoundReplacer.Audio
         private readonly Dictionary<string, AudioClip> _replacements = new Dictionary<string, AudioClip>(StringComparer.Ordinal);
         private readonly Dictionary<string, string> _sources = new Dictionary<string, string>(StringComparer.Ordinal);
         private readonly List<string> _failures = new List<string>();
+        private readonly HashSet<string> _fitted = new HashSet<string>(StringComparer.Ordinal);
+        private readonly List<AudioClip> _owned = new List<AudioClip>();
         private readonly object _sync = new object();
 
         public SoundReplacementManager(ReplacerConfig config, string pluginDirectory)
@@ -70,6 +72,28 @@ namespace SoundReplacer.Audio
                 AudioClip found;
                 if (!_replacements.TryGetValue(name, out found) || found == null) return false;
                 if (ReferenceEquals(found, original)) return false;
+
+                // Первое реальное проигрывание — единственный момент, когда у нас есть
+                // и оригинал, и файл: подгоняем длину/громкость/каналы один раз и кешируем.
+                if (!_fitted.Contains(name))
+                {
+                    _fitted.Add(name);
+
+                    AudioClip fitted = ClipFitter.Fit(
+                        original,
+                        found,
+                        _config.MatchLength,
+                        _config.MatchVolume,
+                        _config.MatchChannels);
+
+                    if (fitted != null)
+                    {
+                        _owned.Add(fitted);
+                        _replacements[name] = fitted;
+                        found = fitted;
+                    }
+                }
+
                 replacement = found;
                 return true;
             }
@@ -93,6 +117,8 @@ namespace SoundReplacer.Audio
                 _replacements.Clear();
                 _sources.Clear();
                 _failures.Clear();
+                _fitted.Clear();
+                _owned.Clear();
             }
 
             if (!_config.Enabled)
@@ -185,9 +211,13 @@ namespace SoundReplacer.Audio
             List<AudioClip> clips;
             lock (_sync)
             {
-                clips = new List<AudioClip>(_replacements.Values);
+                clips = new List<AudioClip>(_owned);
+                clips.AddRange(_replacements.Values);
+
                 _replacements.Clear();
                 _sources.Clear();
+                _owned.Clear();
+                _fitted.Clear();
             }
 
             foreach (AudioClip clip in clips)
@@ -213,6 +243,7 @@ namespace SoundReplacer.Audio
 
                 _replacements[originalName] = clip;
                 _sources[originalName] = source;
+                _owned.Add(clip);
             }
         }
 

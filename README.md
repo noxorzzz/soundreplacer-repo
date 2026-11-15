@@ -301,6 +301,9 @@ dotnet publish .\app\SoundReplacer.App.csproj -c Release -r win-x64 -p:SelfConta
   "enabled": true,
   "patchClipSetter": true,
   "exportCatalog": true,
+  "matchLength": true,
+  "matchVolume": true,
+  "matchChannels": true,
   "sounds": {
     "Sfx - Item Break": "Sounds/Sfx_Item_Break_1a2b3c4d5e6f7a8b.ogg",
     "Music - Menu": "Sounds/Music_Menu_9f8e7d6c5b4a3921.wav",
@@ -315,6 +318,9 @@ dotnet publish .\app\SoundReplacer.App.csproj -c Release -r win-x64 -p:SelfConta
 | `enabled` | bool | `true` | глобальный выключатель замен |
 | `patchClipSetter` | bool | `true` | патчить сеттер `AudioSource.clip` (ловит «положил клип → потом Play()»). Если какой-то мод/игра странно себя ведёт — поставьте `false` |
 | `exportCatalog` | bool | `true` | собирать `catalog.json` |
+| `matchLength` | bool | `true` | обрезать файл до длительности оригинала: длинный звук не продолжается после события |
+| `matchVolume` | bool | `true` | приводить пик файла к пику оригинального клипа (громкость не скачет) |
+| `matchChannels` | bool | `true` | сводить стерео в моно, если оригинал моно — иначе 3D-панорама не работает |
 | `sounds` | object | `{}` | маппинг `точное имя AudioClip → путь к .ogg/.wav` |
 
 Правила:
@@ -322,6 +328,7 @@ dotnet publish .\app\SoundReplacer.App.csproj -c Release -r win-x64 -p:SelfConta
 * **Ключ** — точное имя `AudioClip.name`, с учётом регистра и пробелов. Список реальных имён даёт `catalog.json` (и приложение).
 * **Путь** может быть относительным (от папки мода; приложение всегда пишет `Sounds/...`) или абсолютным.
 * Поддерживаются `.ogg` (Vorbis) и `.wav` (PCM 8/16/24/32 бит или IEEE-float 32 бита, 1–2 канала, до 120 секунд, до 200 МБ).
+* **Длина, громкость и каналы подгоняются автоматически** под оригинал (см. `matchLength`, `matchVolume`, `matchChannels`). Пространственные эффекты — затухание по расстоянию, позиция на карте, реверберация, микшер — не трогаются: меняется только `AudioClip`, а `AudioSource` остаётся штатным, поэтому звук ведёт себя на карте так же, как оригинал.
 * Ogg **Opus** не поддерживается — Unity декодирует только Vorbis; приложение отбракует такой файл заранее.
 * Нет файла / битый файл / неизвестное расширение → мод пишет `WARN` в оба лога, **оригинальный звук остаётся**, игра не падает.
 * Битого `config.json` (невалидный JSON, `sounds` не объект) → мод пишет `ERROR`, работает без замен.

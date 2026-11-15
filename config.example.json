@@ -3,6 +3,9 @@
   "enabled": true,
   "patchClipSetter": true,
   "exportCatalog": true,
+  "matchLength": true,
+  "matchVolume": true,
+  "matchChannels": true,
   "sounds": {
     "Sfx - Item Break": "Sounds/Sfx_Item_Break_1a2b3c4d5e6f7a8b.ogg",
     "Music - Menu": "Sounds/Music_Menu_9f8e7d6c5b4a3921.wav",

@@ -39,6 +39,8 @@ namespace SoundReplacer.Catalog
         private sealed class Entry
         {
             public int Plays;
+            public float Length;
+            public int Channels;
             public DateTime LastSeenUtc;
         }
 
@@ -82,6 +84,15 @@ namespace SoundReplacer.Catalog
 
                 entry.Plays++;
                 entry.LastSeenUtc = DateTime.UtcNow;
+
+                // Длина и каналы нужны, чтобы приложение и мод не подменяли звук
+                // файлом, который длиннее оригинала или ломает 3D-панораму.
+                if (entry.Length <= 0f)
+                {
+                    entry.Length = clip.length;
+                    entry.Channels = clip.channels;
+                }
+
                 _dirty = true;
             }
         }
@@ -106,7 +117,7 @@ namespace SoundReplacer.Catalog
 
                     string name = clip.name;
                     if (string.IsNullOrEmpty(name)) continue;
-                    if (Register(name)) added++;
+                    if (Register(name, clip)) added++;
                 }
 
                 if (added > 0)
@@ -153,14 +164,19 @@ namespace SoundReplacer.Catalog
             ModLog.Debug("catalog.json обновлён: " + catalog.Sounds.Count + " записей");
         }
 
-        private bool Register(string name)
+        private bool Register(string name, AudioClip clip)
         {
             lock (_sync)
             {
                 if (_entries.ContainsKey(name)) return false;
                 if (_entries.Count >= MaxEntries) return false;
 
-                _entries[name] = new Entry { LastSeenUtc = DateTime.UtcNow };
+                _entries[name] = new Entry
+                {
+                    Length = clip == null ? 0f : clip.length,
+                    Channels = clip == null ? 0 : clip.channels,
+                    LastSeenUtc = DateTime.UtcNow
+                };
                 _dirty = true;
                 return true;
             }
@@ -186,6 +202,8 @@ namespace SoundReplacer.Catalog
                 {
                     Name = pair.Key,
                     Plays = pair.Value.Plays,
+                    Length = pair.Value.Length,
+                    Channels = pair.Value.Channels,
                     LastSeenUtc = pair.Value.LastSeenUtc.ToString("o")
                 });
             }

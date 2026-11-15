@@ -31,7 +31,7 @@ namespace SoundReplacer
     {
         public const string Guid = "com.soundreplacer.repo";
         public const string PluginName = "SoundReplacer";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.1.0";
 
         internal static Plugin Instance { get; private set; }
 

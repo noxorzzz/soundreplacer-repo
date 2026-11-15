@@ -42,6 +42,7 @@ internal static class Smoke
         config.Sounds["Sfx - Item Break"] = "Sounds/break_0123456789abcdef.ogg";
         config.Sounds["Крик игрока"] = "Sounds/крик.wav";
         config.PatchClipSetter = false;
+        config.MatchVolume = false;
 
         string error;
         ReplacerConfig parsed = ReplacerConfig.FromJson(config.ToJson(), out error);
@@ -54,6 +55,9 @@ internal static class Smoke
         Check(parsed.Sounds["Крик игрока"] == "Sounds/крик.wav", "config cyrillic mapping");
         Check(parsed.PatchClipSetter == false, "config patchClipSetter");
         Check(parsed.Version == ReplacerConfig.CurrentVersion, "config version");
+        Check(parsed.MatchLength, "config matchLength default true");
+        Check(parsed.MatchChannels, "config matchChannels default true");
+        Check(parsed.MatchVolume == false, "config matchVolume respected");
     }
 
     private static void CatalogRoundTrip()
@@ -69,6 +73,8 @@ internal static class Smoke
         {
             Name = "Sfx - Item Break",
             Plays = 12,
+            Length = 2.35f,
+            Channels = 1,
             LastSeenUtc = DateTime.UtcNow.ToString("o")
         });
         catalog.Sounds.Add(new SoundCatalogEntry
@@ -87,6 +93,8 @@ internal static class Smoke
         Check(parsed.Sounds.Count == 2, "catalog count");
         Check(parsed.Sounds[0].Name == "Sfx - Item Break", "catalog sorted by plays");
         Check(parsed.Sounds[0].Plays == 12, "catalog plays");
+        Check(Math.Abs(parsed.Sounds[0].Length - 2.35f) < 0.001f, "catalog length");
+        Check(parsed.Sounds[0].Channels == 1, "catalog channels");
         Check(parsed.GameVersion == "0.1.0", "catalog game version");
     }
 

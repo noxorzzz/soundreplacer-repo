@@ -32,6 +32,16 @@ namespace SoundReplacer.Shared
         public bool Enabled { get; set; }
         public bool PatchClipSetter { get; set; }
         public bool ExportCatalog { get; set; }
+
+        /// <summary>Обрезать файл до длины оригинала (иначе звук «висит» дольше события).</summary>
+        public bool MatchLength { get; set; }
+
+        /// <summary>Приводить пик файла к пику оригинального клипа, чтобы громкость не скакала.</summary>
+        public bool MatchVolume { get; set; }
+
+        /// <summary>Сводить стерео в моно, если оригинал моно: иначе 3D-панорама работает криво.</summary>
+        public bool MatchChannels { get; set; }
+
         public Dictionary<string, string> Sounds { get; private set; }
 
         public ReplacerConfig()
@@ -40,6 +50,9 @@ namespace SoundReplacer.Shared
             Enabled = true;
             PatchClipSetter = true;
             ExportCatalog = true;
+            MatchLength = true;
+            MatchVolume = true;
+            MatchChannels = true;
             Sounds = new Dictionary<string, string>(StringComparer.Ordinal);
         }
 
@@ -50,6 +63,9 @@ namespace SoundReplacer.Shared
             root["enabled"] = Enabled;
             root["patchClipSetter"] = PatchClipSetter;
             root["exportCatalog"] = ExportCatalog;
+            root["matchLength"] = MatchLength;
+            root["matchVolume"] = MatchVolume;
+            root["matchChannels"] = MatchChannels;
 
             var sounds = new Dictionary<string, object>(StringComparer.Ordinal);
             foreach (KeyValuePair<string, string> pair in Sounds.OrderBy(p => p.Key, StringComparer.Ordinal))
@@ -84,6 +100,9 @@ namespace SoundReplacer.Shared
             config.Enabled = Json.GetBool(obj, "enabled", true);
             config.PatchClipSetter = Json.GetBool(obj, "patchClipSetter", true);
             config.ExportCatalog = Json.GetBool(obj, "exportCatalog", true);
+            config.MatchLength = Json.GetBool(obj, "matchLength", true);
+            config.MatchVolume = Json.GetBool(obj, "matchVolume", true);
+            config.MatchChannels = Json.GetBool(obj, "matchChannels", true);
 
             object rawSounds = Json.Get(obj, "sounds");
             if (rawSounds != null)
@@ -215,8 +234,8 @@ namespace SoundReplacer.Shared
         public string Describe()
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "version={0}, enabled={1}, patchClipSetter={2}, sounds={3}",
-                Version, Enabled, PatchClipSetter, Sounds.Count);
+                "version={0}, enabled={1}, patchClipSetter={2}, matchLength={3}, matchVolume={4}, matchChannels={5}, sounds={6}",
+                Version, Enabled, PatchClipSetter, MatchLength, MatchVolume, MatchChannels, Sounds.Count);
         }
     }
 }
