@@ -13,6 +13,7 @@
 ![BepInEx](https://img.shields.io/badge/BepInEx-5.4.x-6F42C1)
 ![R.E.P.O.](https://img.shields.io/badge/R.E.P.O.-Unity%202022.3-FF7A45)
 ![Windows](https://img.shields.io/badge/Windows-x64-0EA5E9?logo=windows&logoColor=white)
+[![Release](https://img.shields.io/github/v/release/noxorzzz/soundreplacer-repo?label=release&color=3DDC97)](https://github.com/noxorzzz/soundreplacer-repo/releases/latest)
 
 </div>
 
@@ -26,7 +27,7 @@
 | 1 | Установите **BepInEx 5.4.x x64** в папку игры (рядом с `REPO.exe`) |
 | 2 | Положите `SoundReplacer.dll` в `BepInEx/plugins/SoundReplacer/` |
 | 3 | Запустите игру и закройте — мод соберёт `catalog.json` |
-| 4 | Запустите **SoundReplacer.App**, выберите файлы → **«Применить»** |
+| 4 | Запустите **SoundReplacer.App** (готовый архив — в [Releases](https://github.com/noxorzzz/soundreplacer-repo/releases/latest)), выберите файлы → **«Применить»** |
 | 5 | Перезапустите игру |
 
 ## Возможности
@@ -468,6 +469,9 @@ git clone https://github.com/noxorzzz/soundreplacer-repo.git
 3. artifact `SoundReplacer.App-win-x64` — готовая папка с exe.
 
 Мод в CI не собирается: без установленной игры нет `BepInEx.dll`, `0Harmony.dll` и DLL Unity. Сборка мода — только локально (`dotnet build mod/... -p:GameDir=...`, раздел 6).
+
+Релиз `v1.0.0` опубликован: https://github.com/noxorzzz/soundreplacer-repo/releases/tag/v1.0.0
+(ассеты: `SoundReplacer.App-win-x64.zip` из CI и `config.example.json`).
 
 Релиз: поднимите версию в `mod/Plugin.cs` (`PluginVersion`), `app/SoundReplacer.App.csproj` (`Version`) и `CHANGELOG.md`, затем
 
