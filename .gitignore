@@ -13,6 +13,10 @@ catalog.json
 # локальный offline-restore
 .nuget-packages/
 
+# сборка Thunderstore-пакета
+dist/
+.thunderstore-build/
+
 # local test audio
 *.ogg
 *.wav

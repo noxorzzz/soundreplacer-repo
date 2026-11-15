@@ -2,6 +2,17 @@
 
 Все значимые изменения — здесь. Формат: [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/), версии — [SemVer](https://semver.org/lang/ru/).
 
+## [1.0.1] — 2026-11-15
+
+### Исправлено
+
+- Приложение теперь находит папку мода и в раскладке менеджеров Thunderstore/r2modman (`BepInEx/plugins/<Team>-SoundReplacer/`), а не только `BepInEx/plugins/SoundReplacer/`. Пути пересчитываются по «Обновить каталог».
+
+### Добавлено
+
+- Заготовка Thunderstore-пакета: `thunderstore/manifest.json`, `icon.png` (256×256), `README.md`, `CHANGELOG.md`, скрипт `pack.ps1` для сборки и упаковки zip.
+- Ссылка на релиз в README.
+
 ## [1.0.0] — 2026-11-15
 
 ### Добавлено

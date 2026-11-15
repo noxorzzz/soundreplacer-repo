@@ -193,6 +193,13 @@ namespace SoundReplacer.App
         {
             _rows.Clear();
 
+            // Пересоздаём пути: мод мог появиться или переехать (папка Thunderstore).
+            if (!string.IsNullOrEmpty(_settings.GameDirectory) && Directory.Exists(_settings.GameDirectory))
+            {
+                _paths = new ModPaths(_settings.GameDirectory);
+                UpdatePathLabels();
+            }
+
             if (_paths == null)
             {
                 RebuildGrid();

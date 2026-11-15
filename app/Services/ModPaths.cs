@@ -7,12 +7,18 @@ namespace SoundReplacer.App.Services
 {
     /// <summary>
     /// Все пути согласованы с модом: мод читает config.json из своей папки
-    /// (BepInEx/plugins/SoundReplacer), приложение пишет туда же.
+    /// (рядом с SoundReplacer.dll), приложение пишет туда же.
+    ///
+    /// Папка мода не всегда BepInEx/plugins/SoundReplacer: r2modman и Thunderstore
+    /// ставят пакет в свою подпапку, поэтому DLL ищется по всем каталогам плагинов.
     /// </summary>
     public sealed class ModPaths
     {
         public const string PluginFolderName = "SoundReplacer";
         public const string SoundsFolderName = "Sounds";
+        public const string ModAssemblyName = "SoundReplacer.dll";
+
+        private readonly string _pluginDirectory;
 
         public ModPaths(string gameDirectory)
         {
@@ -20,6 +26,7 @@ namespace SoundReplacer.App.Services
                 throw new ArgumentException("Не указана папка игры", nameof(gameDirectory));
 
             GameDirectory = Path.GetFullPath(gameDirectory);
+            _pluginDirectory = ResolvePluginDirectory();
         }
 
         public string GameDirectory { get; private set; }
@@ -29,9 +36,26 @@ namespace SoundReplacer.App.Services
             get { return Path.Combine(GameDirectory, "BepInEx"); }
         }
 
+        public string PluginsDirectory
+        {
+            get { return Path.Combine(BepInExDirectory, "plugins"); }
+        }
+
+        /// <summary>Папка, где лежит SoundReplacer.dll (или куда он будет положен).</summary>
         public string PluginDirectory
         {
-            get { return Path.Combine(BepInExDirectory, "plugins", PluginFolderName); }
+            get { return _pluginDirectory; }
+        }
+
+        public bool IsDefaultPluginDirectory
+        {
+            get
+            {
+                return string.Equals(
+                    Path.GetFullPath(PluginDirectory),
+                    Path.GetFullPath(Path.Combine(PluginsDirectory, PluginFolderName)),
+                    StringComparison.OrdinalIgnoreCase);
+            }
         }
 
         public string ConfigPath
@@ -66,7 +90,7 @@ namespace SoundReplacer.App.Services
 
         public bool ModInstalled
         {
-            get { return File.Exists(Path.Combine(PluginDirectory, "SoundReplacer.dll")); }
+            get { return File.Exists(Path.Combine(PluginDirectory, ModAssemblyName)); }
         }
 
         public void EnsureDirectories()
@@ -84,6 +108,42 @@ namespace SoundReplacer.App.Services
                 Arguments = "\"" + PluginDirectory + "\"",
                 UseShellExecute = true
             });
+        }
+
+        private string ResolvePluginDirectory()
+        {
+            string defaultDirectory = Path.Combine(PluginsDirectory, PluginFolderName);
+
+            if (!Directory.Exists(PluginsDirectory))
+                return defaultDirectory;
+
+            if (File.Exists(Path.Combine(defaultDirectory, ModAssemblyName)))
+                return defaultDirectory;
+
+            // Thunderstore / r2modman: BepInEx/plugins/<Team>-<Package>/SoundReplacer.dll
+            try
+            {
+                string[] found = Directory.GetFiles(PluginsDirectory, ModAssemblyName, SearchOption.AllDirectories);
+                foreach (string dll in found)
+                {
+                    string directory = Path.GetDirectoryName(dll);
+                    if (string.IsNullOrEmpty(directory)) continue;
+
+                    string relative = directory.Substring(PluginsDirectory.Length)
+                        .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    if (relative.Length == 0) continue;
+                    if (relative.Split(Path.DirectorySeparatorChar).Length <= 3) return directory;
+                }
+            }
+            catch (IOException)
+            {
+                // нет доступа к части папок — остаёмся на пути по умолчанию
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
+
+            return defaultDirectory;
         }
     }
 }

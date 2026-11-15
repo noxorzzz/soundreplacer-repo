@@ -57,6 +57,7 @@
 - [Мультиплеер](#8-мультиплеер--важно)
 - [Диагностика](#10-диагностика)
 - [Зависимости](#13-зависимости)
+- [Thunderstore](#151-thunderstore)
 - [Что проверено](#14-что-проверено-а-что-нет)
 
 ---
@@ -128,6 +129,7 @@ R.E.P.O mod/
 ├─ .gitattributes
 ├─ .github/workflows/ci.yml             # тесты + сборка приложения
 ├─ docs/                                # banner, схема и инструкция USAGE.md
+├─ thunderstore/                         # пакет для Thunderstore: manifest, icon, pack.ps1
 ├─ tests/SharedSmoke/                   # 26 дымовых проверок shared-слоя
 ├─ shared/                              # общий слой мода и приложения
 │  ├─ Json.cs                           # свой мини-JSON (без NuGet и без конфликтов DLL)
@@ -473,17 +475,41 @@ git clone https://github.com/noxorzzz/soundreplacer-repo.git
 
 Мод в CI не собирается: без установленной игры нет `BepInEx.dll`, `0Harmony.dll` и DLL Unity. Сборка мода — только локально (`dotnet build mod/... -p:GameDir=...`, раздел 6).
 
-Релиз `v1.0.0` опубликован: https://github.com/noxorzzz/soundreplacer-repo/releases/tag/v1.0.0
-(ассеты: `SoundReplacer.App-win-x64.zip` из CI и `config.example.json`).
+Релизы: https://github.com/noxorzzz/soundreplacer-repo/releases — `v1.0.1` (приложение из CI) и `v1.0.0` (первый релиз мода).
 
-Релиз: поднимите версию в `mod/Plugin.cs` (`PluginVersion`), `app/SoundReplacer.App.csproj` (`Version`) и `CHANGELOG.md`, затем
+Ревизия: поднимите версию в `mod/Plugin.cs` (`PluginVersion`), `app/SoundReplacer.App.csproj` (`Version`) и `CHANGELOG.md`, затем
 
 ```bash
-git tag v1.0.0
+git tag v1.0.1
 git push origin main --tags
 ```
 
 и приложите к GitHub Release `SoundReplacer.dll`, `config.example.json` и README.
+
+### 15.1. Thunderstore
+
+Пакет для [Thunderstore](https://thunderstore.io/c/repo/) лежит в `thunderstore/`:
+
+* `manifest.json` — имя `SoundReplacer`, зависимость `BepInEx-BepInExPack-5.4.2305`;
+* `icon.png` — 256×256;
+* `README.md` и `CHANGELOG.md` — страница пакета;
+* `pack.ps1` — собирает мод и пакует `dist/noxorzzz-SoundReplacer-<version>.zip`.
+
+Сборка пакета (нужна установленная игра):
+
+```powershell
+cd thunderstore
+.\pack.ps1 -GameDir "D:\SteamLibrary\steamapps\common\REPO"
+```
+
+Загрузка вручную: https://thunderstore.io/c/repo/create/ (команда `noxorzzz`) или
+
+```powershell
+dotnet tool install -g tcli
+tcli publish --file dist/noxorzzz-SoundReplacer-1.0.0.zip --token <API_TOKEN>
+```
+
+Для публичной страницы репозиторий должен быть публичным — иначе ссылки на приложение из README пакета не откроются у игроков.
 
 ## 16. Правовая заметка
 
