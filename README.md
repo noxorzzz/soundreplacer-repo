@@ -1,6 +1,6 @@
 # SoundReplacer — замена звуков в R.E.P.O.
 
-> Репозиторий: [github.com/noxorz/soundreplacer-repo](https://github.com/noxorz/soundreplacer-repo) · лицензия MIT · CI: `shared tests + WinForms app`
+> Репозиторий: [github.com/noxorzzz/soundreplacer-repo](https://github.com/noxorzzz/soundreplacer-repo) · лицензия MIT · CI: `shared tests + WinForms app`
 
 Две независимые части, связанные **только файловой системой**:
 
@@ -410,10 +410,10 @@ NuGet-пакеты приложению **не нужны**.
 
 ## 15. Репозиторий и CI
 
-Репозиторий (приватный): `https://github.com/noxorz/soundreplacer-repo`.
+Репозиторий (приватный): `https://github.com/noxorzzz/soundreplacer-repo`.
 
 ```bash
-git clone https://github.com/noxorz/soundreplacer-repo.git
+git clone https://github.com/noxorzzz/soundreplacer-repo.git
 ```
 
 Что делает CI (`.github/workflows/ci.yml`, `windows-latest`, .NET 10):
