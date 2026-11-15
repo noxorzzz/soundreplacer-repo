@@ -21,6 +21,10 @@
 
 ## 1. Установка мода
 
+**Быстрый путь — Thunderstore:** откройте [noxorzzz/SoundReplacer](https://thunderstore.io/c/repo/p/noxorzzz/SoundReplacer/) и нажмите **Install with Mod Manager** (r2modman / Thunderstore Mod Manager). BepInEx и зависимость `BepInEx-BepInExPack-5.4.2305` установятся сами.
+
+**Вручную:**
+
 1. Распакуйте BepInEx 5.4.x x64 в папку игры — туда, где лежит `REPO.exe`. Появятся `winhttp.dll`, `doorstop_config.ini` и папка `BepInEx`.
 2. Создайте папку:
 

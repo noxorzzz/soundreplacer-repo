@@ -14,6 +14,7 @@
 ![R.E.P.O.](https://img.shields.io/badge/R.E.P.O.-Unity%202022.3-FF7A45)
 ![Windows](https://img.shields.io/badge/Windows-x64-0EA5E9?logo=windows&logoColor=white)
 [![Release](https://img.shields.io/github/v/release/noxorzzz/soundreplacer-repo?label=release&color=3DDC97)](https://github.com/noxorzzz/soundreplacer-repo/releases/latest)
+[![Thunderstore](https://img.shields.io/badge/Thunderstore-1.0.0-23A2C4)](https://thunderstore.io/c/repo/p/noxorzzz/SoundReplacer/)
 
 </div>
 
@@ -224,7 +225,9 @@ R.E.P.O mod/
 
 ### 5.2. Мод
 
-Соберите проект (раздел 6) или возьмите готовый `SoundReplacer.dll` и положите сюда:
+Проще всего — **[Thunderstore](https://thunderstore.io/c/repo/p/noxorzzz/SoundReplacer/)** (`noxorzzz/SoundReplacer`, версия 1.0.0): ставится через r2modman / Thunderstore Mod Manager, BepInEx он подтянет сам, вместе с зависимостью `BepInEx-BepInExPack-5.4.2305`.
+
+Вручную — соберите проект (раздел 6) или возьмите готовый `SoundReplacer.dll` и положите сюда:
 
 ```text
 <игра>/BepInEx/plugins/SoundReplacer/SoundReplacer.dll
@@ -499,6 +502,8 @@ git push origin main --tags
 и приложите к GitHub Release `SoundReplacer.dll`, `config.example.json` и README.
 
 ### 15.1. Thunderstore
+
+Пакет опубликован: **[thunderstore.io/c/repo/p/noxorzzz/SoundReplacer](https://thunderstore.io/c/repo/p/noxorzzz/SoundReplacer/)** — версия `1.0.0`, namespace `noxorzzz`, сообщество `repo`, зависимость `BepInEx-BepInExPack-5.4.2305`.
 
 Пакет для [Thunderstore](https://thunderstore.io/c/repo/) лежит в `thunderstore/`:
 

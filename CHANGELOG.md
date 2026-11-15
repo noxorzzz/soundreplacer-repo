@@ -11,6 +11,7 @@
 
 ### Добавлено
 
+- Мод опубликован на Thunderstore: https://thunderstore.io/c/repo/p/noxorzzz/SoundReplacer/ (пакет `noxorzzz-SoundReplacer-1.0.0`).
 - Заготовка Thunderstore-пакета: `thunderstore/manifest.json`, `icon.png` (256×256), `README.md`, `CHANGELOG.md`, скрипт `pack.ps1` для сборки и упаковки zip.
 - Ссылка на релиз в README.
 
