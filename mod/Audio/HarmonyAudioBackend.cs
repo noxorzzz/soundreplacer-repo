@@ -81,7 +81,7 @@ namespace SoundReplacer.Audio
 
             try
             {
-                _harmony.UnpatchAll(HarmonyId);
+                _harmony.UnpatchSelf();
             }
             catch (Exception ex)
             {

@@ -6,6 +6,7 @@
 
 ### Исправлено
 
+- Сборка мода против реальных сборок игры: `netstandard.dll` из `Managed`, ссылки на Mono-сборки Unity 2022.3 (`-p:FrameworkPathOverride=…\REPO_Data\Managed`), `UnpatchSelf()` вместо устаревшего `UnpatchAll(id)`.
 - Приложение теперь находит папку мода и в раскладке менеджеров Thunderstore/r2modman (`BepInEx/plugins/<Team>-SoundReplacer/`), а не только `BepInEx/plugins/SoundReplacer/`. Пути пересчитываются по «Обновить каталог».
 
 ### Добавлено

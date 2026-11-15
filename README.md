@@ -260,8 +260,20 @@ dotnet build .\mod\SoundReplacer.Mod.csproj -c Release -p:GameDir="D:\SteamLibra
 
 * `GameDir` нужен только для ссылок на `BepInEx.dll`, `0Harmony.dll` и DLL Unity; после сборки DLL автоматически копируется в `BepInEx/plugins/SoundReplacer`.
 * Отключить копирование: `-p:CopyToGame=false`.
-* Для `net472` SDK при первой сборке скачает reference assemblies (`Microsoft.NETFramework.ReferenceAssemblies`) — нужен доступ к NuGet или установленный .NET Framework 4.7.2 Targeting Pack (идёт с Visual Studio Build Tools).
+* Если BepInEx не установлен в папку игры (моды идут через профиль r2modman/Thunderstore Mod Manager), передайте папку ядра: `-p:BepInExCore="…\profiles\Default\BepInEx\core"`.
+* Unity 2022.3 собирает сборки игры под .NET Standard 2.1, поэтому без .NET Framework 4.7.2 Targeting Pack сборка идёт против Mono-сборок самой игры — так надёжнее:
+
+```powershell
+dotnet build .\mod\SoundReplacer.Mod.csproj -c Release `
+  -p:GameDir="J:\SteamLibrary\steamapps\common\REPO" `
+  -p:BepInExCore="…\BepInEx\core" `
+  -p:CopyToGame=false `
+  -p:FrameworkPathOverride="J:\SteamLibrary\steamapps\common\REPO\REPO_Data\Managed" `
+  -p:AutomaticallyUseReferenceAssemblyPackages=false
+```
+
 * Если папка игры называется иначе (`REPO_Data` отсутствует) — поправьте `ManagedDir` в `mod/SoundReplacer.Mod.csproj`.
+* `dotnet build` без флагов работает и на чистой машине: SDK скачает reference assemblies с NuGet (нужен интернет).
 
 ### Приложение
 
