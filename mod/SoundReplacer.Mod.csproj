@@ -1,0 +1,91 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Мод для R.E.P.O. (Unity / Mono) под BepInEx 5.x.
+    Целевой фреймворк net472 — именно его использует BepInEx 5 и Assembly-CSharp игры.
+
+    Сборка (пример):
+      dotnet build mod/SoundReplacer.Mod.csproj -c Release -p:GameDir="D:\SteamLibrary\steamapps\common\REPO"
+
+    GameDir нужен только на этапе компиляции: из него берутся ссылки на BepInEx.dll,
+    0Harmony.dll и DLL Unity. Если папка игры не совпадает со значением по умолчанию,
+    просто передайте -p:GameDir=...
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>SoundReplacer</AssemblyName>
+    <RootNamespace>SoundReplacer</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Deterministic>true</Deterministic>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <DebugType>portable</DebugType>
+
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>SoundReplacer</Product>
+    <Company>SoundReplacer</Company>
+    <Description>Runtime sound replacement for R.E.P.O. (BepInEx 5 / Harmony)</Description>
+
+    <!-- Папка игры. Переопределяется через -p:GameDir=... -->
+    <GameDir Condition="'$(GameDir)' == ''">C:\Program Files (x86)\Steam\steamapps\common\REPO</GameDir>
+    <BepInExCore>$(GameDir)\BepInEx\core</BepInExCore>
+    <ManagedDir>$(GameDir)\REPO_Data\Managed</ManagedDir>
+    <PluginOutputDir>$(GameDir)\BepInEx\plugins\SoundReplacer</PluginOutputDir>
+  </PropertyGroup>
+
+  <!-- Общий слой с приложением: конфиг, каталог, JSON. Один исходник — один контракт. -->
+  <ItemGroup>
+    <Compile Include="..\shared\*.cs" LinkBase="Shared" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx">
+      <HintPath>$(BepInExCore)\BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(BepInExCore)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(ManagedDir)\UnityEngine.AudioModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestAudioModule">
+      <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Автокопирование в игру, если папка BepInEx существует. Отключается через -p:CopyToGame=false -->
+  <PropertyGroup>
+    <CopyToGame Condition="'$(CopyToGame)' == ''">true</CopyToGame>
+  </PropertyGroup>
+
+  <Target Name="CopyPluginToGame" AfterTargets="Build"
+          Condition="'$(CopyToGame)' == 'true' And Exists('$(GameDir)\BepInEx')">
+    <MakeDir Directories="$(PluginOutputDir)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PluginOutputDir)" />
+    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(PluginOutputDir)"
+          Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+    <Message Importance="high" Text="SoundReplacer: $(TargetFileName) -> $(PluginOutputDir)" />
+  </Target>
+
+</Project>

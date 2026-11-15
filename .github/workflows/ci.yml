@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-app:
+    name: shared tests + WinForms app
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # Мод в CI не собирается: ему нужны BepInEx.dll, 0Harmony.dll и DLL Unity
+      # из установленной игры. Поэтому CI проверяет shared-слой и приложение,
+      # а мод собирается локально (см. README, раздел 6).
+      - name: Shared smoke tests
+        run: dotnet run --project tests/SharedSmoke/SharedSmoke.csproj -c Release
+
+      - name: Build WinForms app
+        run: dotnet build app/SoundReplacer.App.csproj -c Release
+
+      - name: Upload app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoundReplacer.App-win-x64
+          path: app/bin/Release/net10.0-windows/
+          if-no-files-found: error

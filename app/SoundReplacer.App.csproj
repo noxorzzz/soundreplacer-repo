@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Внешнее приложение (WinForms, .NET 10 / LTS).
+    Не ссылается на мод и не вызывает его методы: общение только через файлы
+    BepInEx/plugins/SoundReplacer/{config.json, Sounds/, catalog.json}.
+
+    Сборка:
+      dotnet build app/SoundReplacer.App.csproj -c Release
+    Публикация одним файлом (не требует установленного .NET):
+      dotnet publish app/SoundReplacer.App.csproj -c Release -r win-x64 -p:SelfContained=true
+        -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+  -->
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>SoundReplacer.App</AssemblyName>
+    <RootNamespace>SoundReplacer.App</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <Product>SoundReplacer</Product>
+    <AssemblyTitle>SoundReplacer — замена звуков R.E.P.O.</AssemblyTitle>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <!-- Общий слой с модом: тот же config.json/catalog.json и тот же JSON-парсер. -->
+  <ItemGroup>
+    <Compile Include="..\shared\*.cs" LinkBase="Shared" />
+  </ItemGroup>
+
+</Project>

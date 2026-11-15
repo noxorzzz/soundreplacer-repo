@@ -1,0 +1,19 @@
+# build artifacts
+bin/
+obj/
+*.user
+.vs/
+.idea/
+
+# generated at runtime inside the game folder
+SoundReplacer.log
+SoundReplacer.log.1
+catalog.json
+
+# локальный offline-restore
+.nuget-packages/
+
+# local test audio
+*.ogg
+*.wav
+!docs/example.ogg
