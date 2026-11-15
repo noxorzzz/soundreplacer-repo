@@ -1,8 +1,8 @@
 {
     "name":  "SoundReplacer",
-    "version_number":  "1.1.0",
+    "version_number":  "1.1.1",
     "website_url":  "https://github.com/noxorzzz/soundreplacer-repo",
-    "description":  "Replace R.E.P.O. sounds with your own .ogg/.wav files. Client-side swap by clip name via Harmony. Auto-fits length, peak volume and channels to the original clip, so volume and 3D distance effects stay intact; the companion app lists real clip names and writes the config.",
+    "description":  "Replace R.E.P.O. sounds with your own .ogg/.wav files. Harmony swaps clips by name; length, peak volume and channels auto-fit the original, so volume and 3D distance stay intact. Companion app lists real clip names and writes the config.",
     "dependencies":  [
                          "BepInEx-BepInExPack-5.4.2305"
                      ]

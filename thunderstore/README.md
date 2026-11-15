@@ -9,7 +9,8 @@ Client-side BepInEx 5 + Harmony mod: it swaps the `AudioClip` by name at play ti
 - 9 hook points: `AudioSource.Play()`, `Play(ulong)`, `PlayDelayed`, `PlayScheduled`, `PlayOneShot` (2 overloads), `PlayClipAtPoint` (2), and the `clip` setter.
 - Ogg Vorbis and WAV (PCM 8/16/24/32-bit or float32, 1–2 channels, up to 120 s).
 - Missing or broken file never crashes the game: a warning is logged and the original sound plays.
-- `catalog.json` with real clip names and play counts, updated while you play.
+- **Auto-fit to the original clip**: the file is trimmed to the original length, its peak is matched to the original loudness, and stereo is downmixed when the original is mono. The `AudioSource` is left untouched, so distance attenuation, 3D position, reverb and mixer effects stay exactly as vanilla. Toggle with `matchLength`, `matchVolume`, `matchChannels`.
+- `catalog.json` with real clip names, play counts, original `length` and `channels`, updated while you play.
 - Own log with rotation plus `BepInEx/LogOutput.log`.
 - Reset removes all replacements and returns vanilla sounds.
 
@@ -38,6 +39,9 @@ The app finds the mod folder automatically, including Thunderstore/r2modman layo
   "enabled": true,
   "patchClipSetter": true,
   "exportCatalog": true,
+  "matchLength": true,
+  "matchVolume": true,
+  "matchChannels": true,
   "sounds": {
     "Sfx - Item Break": "Sounds/Sfx_Item_Break_1a2b3c4d5e6f7a8b.ogg"
   }

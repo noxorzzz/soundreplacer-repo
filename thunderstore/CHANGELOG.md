@@ -1,8 +1,14 @@
+# 1.1.1
+
+- Описание пакета: в README на странице Thunderstore добавлена автоподгонка длины, громкости и каналов под оригинал.
+
+# 1.1.0
+
+- Замена подгоняется под оригинал: длина обрезается до длительности оригинала, пик громкости выравнивается по оригинальному клипу, стерео сводится в моно, если оригинал моно.
+- Пространственные эффекты (затухание по расстоянию, позиция на карте, реверберация, микшер) не трогаются: меняется только AudioClip.
+- В catalog.json добавлены length и channels каждого звука.
+- Флаги в config.json: matchLength, matchVolume, matchChannels (по умолчанию true).
+
 # 1.0.0
 
-- Initial release.
-- Harmony-based client-side sound replacement by `AudioClip` name (9 `AudioSource` hook points).
-- Ogg Vorbis and WAV loading with validation; broken files fall back to the original sound.
-- `catalog.json` with clip names and play counts for the companion app.
-- Separate rotating log plus `BepInEx/LogOutput.log` output.
-- Config: `enabled`, `patchClipSetter`, `exportCatalog`, `sounds` map.
+- Первый релиз: замена звуков R.E.P.O. по имени клипа через Harmony, каталог звуков, приложение на WinForms.
