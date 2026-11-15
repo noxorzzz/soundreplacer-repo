@@ -57,6 +57,8 @@ internal static class Smoke
         config.EchoDecayRatio = 0.35;
         config.EchoWetMix = 0.4;
         config.EchoDryMix = 0.9;
+        config.LowPassHz = 6500;
+        config.ReverbPreset = "Room";
 
         string error;
         ReplacerConfig parsed = ReplacerConfig.FromJson(config.ToJson(), out error);
@@ -86,6 +88,8 @@ internal static class Smoke
         Check(Math.Abs(parsed.EchoDecayRatio - 0.35) < 0.001, "config echoDecayRatio");
         Check(Math.Abs(parsed.EchoWetMix - 0.4) < 0.001, "config echoWetMix");
         Check(Math.Abs(parsed.EchoDryMix - 0.9) < 0.001, "config echoDryMix");
+        Check(Math.Abs(parsed.LowPassHz - 6500) < 0.001, "config lowPassHz");
+        Check(parsed.ReverbPreset == "Room", "config reverbPreset");
     }
 
     private static void CatalogRoundTrip()

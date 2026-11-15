@@ -1,3 +1,9 @@
+# 1.7.0
+
+- `lowPassHz`: high-frequency rolloff so a track sounds muffled like the game's own audio.
+- `reverbPreset`: Unity reverb (`Room`, `Hall`, `Cave`…); `Room` matches R.E.P.O.'s concrete interiors.
+- Effect chain on the track's own source only: low-pass → reverb → short echo. Other sounds are untouched.
+
 # 1.6.0
 
 - Echo on the 3D track: `echo`, `echoDelayMs`, `echoDecayRatio`, `echoWetMix`, `echoDryMix`. An `AudioEchoFilter` is attached only to the track's own source, so nothing else changes.

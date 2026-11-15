@@ -87,6 +87,12 @@ namespace SoundReplacer.Shared
         /// <summary>Доля «сухого» сигнала (0–1).</summary>
         public double EchoDryMix { get; set; }
 
+        /// <summary>Срез высоких частот, Гц (0 — выключено). У игры звук глухой, без «стекла».</summary>
+        public double LowPassHz { get; set; }
+
+        /// <summary>Пресет реверберации Unity: Room, Hall, Cave, Off и т.д. Пусто — выключено.</summary>
+        public string ReverbPreset { get; set; }
+
         public Dictionary<string, string> Sounds { get; private set; }
 
         public ReplacerConfig()
@@ -112,6 +118,8 @@ namespace SoundReplacer.Shared
             EchoDecayRatio = 0.5;
             EchoWetMix = 0.5;
             EchoDryMix = 1.0;
+            LowPassHz = 0.0;
+            ReverbPreset = string.Empty;
             Sounds = new Dictionary<string, string>(StringComparer.Ordinal);
         }
 
@@ -139,6 +147,8 @@ namespace SoundReplacer.Shared
             root["echoDecayRatio"] = EchoDecayRatio;
             root["echoWetMix"] = EchoWetMix;
             root["echoDryMix"] = EchoDryMix;
+            root["lowPassHz"] = LowPassHz;
+            root["reverbPreset"] = ReverbPreset;
 
             var noTrim = new List<object>(NoTrim.Count);
             foreach (string name in NoTrim) noTrim.Add(name);
@@ -192,6 +202,8 @@ namespace SoundReplacer.Shared
             config.EchoDecayRatio = Json.GetDouble(obj, "echoDecayRatio", 0.5);
             config.EchoWetMix = Json.GetDouble(obj, "echoWetMix", 0.5);
             config.EchoDryMix = Json.GetDouble(obj, "echoDryMix", 1.0);
+            config.LowPassHz = Json.GetDouble(obj, "lowPassHz", 0.0);
+            config.ReverbPreset = (Json.Get(obj, "reverbPreset") as string ?? string.Empty).Trim();
 
             var rawNoTrim = Json.AsArray(Json.Get(obj, "noTrim"));
             if (rawNoTrim != null)

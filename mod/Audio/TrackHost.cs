@@ -38,6 +38,33 @@ namespace SoundReplacer.Audio
                 source.Play();
 
                 float tailSeconds = 0.5f;
+
+                // Порядок как у звукорежиссёра: сначала полоса/глухость, потом отражения.
+                if (config.LowPassHz > 0.0)
+                {
+                    AudioLowPassFilter lowPass = go.AddComponent<AudioLowPassFilter>();
+                    lowPass.cutoffFrequency = Mathf.Clamp((float)config.LowPassHz, 300f, 22000f);
+                    lowPass.lowpassResonanceQ = 1f;
+                    ModLog.Info("трек: срез высоких на " + lowPass.cutoffFrequency.ToString("0") + " Гц");
+                }
+
+                if (!string.IsNullOrEmpty(config.ReverbPreset))
+                {
+                    AudioReverbPreset preset;
+                    if (System.Enum.TryParse(config.ReverbPreset, true, out preset) &&
+                        preset != AudioReverbPreset.Off && preset != AudioReverbPreset.User)
+                    {
+                        AudioReverbFilter reverb = go.AddComponent<AudioReverbFilter>();
+                        reverb.reverbPreset = preset;
+                        tailSeconds += 1.0f;
+                        ModLog.Info("трек: реверберация " + preset);
+                    }
+                    else
+                    {
+                        ModLog.Warn("неизвестный reverbPreset '" + config.ReverbPreset + "', реверберация выключена");
+                    }
+                }
+
                 if (config.Echo)
                 {
                     AudioEchoFilter echo = go.AddComponent<AudioEchoFilter>();
@@ -54,9 +81,11 @@ namespace SoundReplacer.Audio
                 Object.Destroy(go, clip.length + tailSeconds);
 
                 ModLog.Info(string.Format(
-                    "трек для '{0}': 3D-источник в {1}, дистанции {2:0.0}-{3:0.0} м{4}",
+                    "трек для '{0}': 3D-источник в {1}, дистанции {2:0.0}-{3:0.0} м, эхо {4}, срез {5}, реверб {6}",
                     originalName, position, source.minDistance, source.maxDistance,
-                    config.Echo ? ", эхо " + config.EchoDelayMs.ToString("0") + " мс" : ", без эха"));
+                    config.Echo ? config.EchoDelayMs.ToString("0") + " мс" : "выкл",
+                    config.LowPassHz > 0.0 ? config.LowPassHz.ToString("0") + " Гц" : "выкл",
+                    string.IsNullOrEmpty(config.ReverbPreset) ? "выкл" : config.ReverbPreset));
             }
             catch (System.Exception ex)
             {
