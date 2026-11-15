@@ -1,3 +1,7 @@
+# 1.4.0
+
+- `fadeOutSeconds`: smooth fade-out at the end of a replaced clip, so a long track does not cut off abruptly.
+
 # 1.3.0
 
 - `oncePerFile` / `onceWindowSeconds`: repeated starts of the same file inside the window are muted, so a long track does not restart three times when the game fires the jingle several times (local + global, quota honks).

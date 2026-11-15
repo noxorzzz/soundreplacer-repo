@@ -25,7 +25,7 @@ namespace SoundReplacer.Audio
         private const float PeakFloor = 0.0001f;
         private const float GainTolerance = 0.02f;
 
-        public static AudioClip Fit(AudioClip original, AudioClip custom, bool matchLength, bool matchVolume, bool matchChannels)
+        public static AudioClip Fit(AudioClip original, AudioClip custom, bool matchLength, bool matchVolume, bool matchChannels, double fadeOutSeconds)
         {
             if (original == null || custom == null) return null;
 
@@ -73,7 +73,7 @@ namespace SoundReplacer.Audio
                     }
                 }
 
-                if (!trim && !downmix && !level) return null;
+                if (!trim && !downmix && !level && fadeOutSeconds <= 0.0) return null;
 
                 int outChannels = downmix ? 1 : sourceChannels;
                 float[] output = new float[targetFrames * outChannels];
@@ -94,6 +94,23 @@ namespace SoundReplacer.Audio
                         output[i] = Mathf.Clamp(output[i] * gain, -1f, 1f);
                 }
 
+                int fadeFrames = 0;
+                if (fadeOutSeconds > 0.0)
+                {
+                    fadeFrames = (int)Math.Round(fadeOutSeconds * custom.frequency);
+                    if (fadeFrames > targetFrames) fadeFrames = targetFrames;
+                    if (fadeFrames > 0)
+                    {
+                        for (int frame = 0; frame < fadeFrames; frame++)
+                        {
+                            float factor = 1f - (float)(frame + 1) / fadeFrames; // 1 -> 0
+                            int start = (targetFrames - fadeFrames + frame) * outChannels;
+                            for (int ch = 0; ch < outChannels; ch++)
+                                output[start + ch] *= factor;
+                        }
+                    }
+                }
+
                 AudioClip fitted = AudioClip.Create(
                     custom.name + "_fit",
                     targetFrames,
@@ -109,7 +126,7 @@ namespace SoundReplacer.Audio
                 }
 
                 ModLog.Info(string.Format(
-                    "подгонка '{0}': длина {1:0.00} c -> {2:0.00} c{3}, громкость пик {4:0.000} -> {5:0.000}{6}, каналы {7} -> {8}",
+                    "подгонка '{0}': длина {1:0.00} c -> {2:0.00} c{3}, громкость пик {4:0.000} -> {5:0.000}{6}, каналы {7} -> {8}{9}",
                     original.name,
                     custom.length,
                     (float)targetFrames / custom.frequency,
@@ -118,7 +135,8 @@ namespace SoundReplacer.Audio
                     level ? customPeak * gain : customPeak,
                     level ? " (нормализовано)" : string.Empty,
                     sourceChannels,
-                    outChannels));
+                    outChannels,
+                    fadeFrames > 0 ? ", затухание " + fadeOutSeconds.ToString("0.0") + " c" : string.Empty));
 
                 return fitted;
             }

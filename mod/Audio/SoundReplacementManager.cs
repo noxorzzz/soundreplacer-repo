@@ -102,7 +102,8 @@ namespace SoundReplacer.Audio
                         found,
                         _config.MatchLength && !IsNoTrim(name),
                         _config.MatchVolume,
-                        _config.MatchChannels);
+                        _config.MatchChannels,
+                        _config.FadeOutSeconds);
 
                     if (fitted != null)
                     {

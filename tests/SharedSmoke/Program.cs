@@ -47,6 +47,7 @@ internal static class Smoke
         config.NoTrim.Add("extraction point jingle complete 2 local");
         config.OncePerFile = true;
         config.OnceWindowSeconds = 3.5;
+        config.FadeOutSeconds = 1.5;
 
         string error;
         ReplacerConfig parsed = ReplacerConfig.FromJson(config.ToJson(), out error);
@@ -66,6 +67,7 @@ internal static class Smoke
         Check(parsed.NoTrim.Count == 1 && parsed.NoTrim[0] == "extraction point jingle complete 2 local", "config noTrim");
         Check(parsed.OncePerFile, "config oncePerFile");
         Check(Math.Abs(parsed.OnceWindowSeconds - 3.5) < 0.001, "config onceWindowSeconds");
+        Check(Math.Abs(parsed.FadeOutSeconds - 1.5) < 0.001, "config fadeOutSeconds");
     }
 
     private static void CatalogRoundTrip()
