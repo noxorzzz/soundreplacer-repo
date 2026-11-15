@@ -30,6 +30,8 @@
 | 4 | Запустите **SoundReplacer.App** (готовый архив — в [Releases](https://github.com/noxorzzz/soundreplacer-repo/releases/latest)), выберите файлы → **«Применить»** |
 | 5 | Перезапустите игру |
 
+Полная пошаговая инструкция для игрока — **[docs/USAGE.md](docs/USAGE.md)**: установка, сбор каталога, выбор файлов, «Применить»/«Сбросить», разбор ошибок.
+
 ## Возможности
 
 | Мод | Приложение |
@@ -48,6 +50,7 @@
 
 ### Содержание
 
+- [Инструкция для игрока](docs/USAGE.md)
 - [Установка](#5-установка)
 - [Сборка](#6-сборка)
 - [config.json](#7-configjson)
@@ -124,7 +127,7 @@ R.E.P.O mod/
 ├─ SoundReplacer.sln                    # app + mod + tests
 ├─ .gitattributes
 ├─ .github/workflows/ci.yml             # тесты + сборка приложения
-├─ docs/                                # banner.png, architecture.png для README
+├─ docs/                                # banner, схема и инструкция USAGE.md
 ├─ tests/SharedSmoke/                   # 26 дымовых проверок shared-слоя
 ├─ shared/                              # общий слой мода и приложения
 │  ├─ Json.cs                           # свой мини-JSON (без NuGet и без конфликтов DLL)
