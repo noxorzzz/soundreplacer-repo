@@ -32,8 +32,11 @@ namespace SoundReplacer.Audio
             try
             {
                 int sourceChannels = custom.channels;
-                int sourceFrames = sourceChannels > 0 ? custom.samples / sourceChannels : 0;
-                if (sourceFrames <= 0) return null;
+                // Unity: AudioClip.samples — это кадры на канал, а массив SetData/GetData
+                // содержит samples * channels значений. Раньше здесь было деление на каналы,
+                // из-за чего любой стерео-файл укорачивался ровно вдвое.
+                int sourceFrames = custom.samples;
+                if (sourceFrames <= 0 || sourceChannels <= 0) return null;
 
                 bool downmix = matchChannels && original.channels == 1 && sourceChannels == 2;
 

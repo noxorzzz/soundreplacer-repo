@@ -13,6 +13,7 @@ Client-side BepInEx 5 + Harmony mod: it swaps the `AudioClip` by name at play ti
 - `noTrim`: names excluded from trimming, so a long track can replace a short jingle (quota honks, UI stingers).
 - `oncePerFile`: the same file is not restarted within `onceWindowSeconds`, so a long track is not stacked three times when the game fires the jingle repeatedly.
 - `fadeOutSeconds`: smooth fade-out at the end of the replaced clip.
+- `spatial`: the track plays on its own 3D source at the event position — louder up close, quieter with distance (`minDistance`, `maxDistance`, `trackVolume`). It is unaffected by the game re-triggering the original sound.
 - `logPlays`: every played clip appears in the log with its length and channel count.
 - `catalog.json` with real clip names, play counts, original `length` and `channels`, updated while you play.
 - Own log with rotation plus `BepInEx/LogOutput.log`.
@@ -51,6 +52,10 @@ The app finds the mod folder automatically, including Thunderstore/r2modman layo
   "oncePerFile": true,
   "onceWindowSeconds": 3.0,
   "fadeOutSeconds": 1.5,
+  "spatial": ["extraction point alarm"],
+  "minDistance": 3.0,
+  "maxDistance": 40.0,
+  "trackVolume": 1.0,
   "sounds": {
     "Sfx - Item Break": "Sounds/Sfx_Item_Break_1a2b3c4d5e6f7a8b.ogg"
   }

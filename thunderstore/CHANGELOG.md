@@ -1,3 +1,9 @@
+# 1.5.0
+
+- Fixed: stereo files were cut exactly in half — `AudioClip.samples` is frames per channel, the code divided it by the channel count.
+- Fixed: a repeated trigger no longer swaps the clip for silence; that start is skipped, so a playing track is not interrupted.
+- Added `spatial`: a track can play on its own 3D AudioSource at the event position with logarithmic distance falloff (`minDistance`, `maxDistance`, `trackVolume`).
+
 # 1.4.0
 
 - `fadeOutSeconds`: smooth fade-out at the end of a replaced clip, so a long track does not cut off abruptly.

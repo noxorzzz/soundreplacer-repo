@@ -63,6 +63,15 @@ namespace SoundReplacer.Shared
         /// <summary>Плавное затухание в конце заменённого клипа, секунды (0 — выключено).</summary>
         public double FadeOutSeconds { get; set; }
 
+        /// <summary>Имена, для которых трек играет на отдельном 3D-источнике (с физикой расстояния).</summary>
+        public List<string> Spatial { get; private set; }
+
+        public double MinDistance { get; set; }
+
+        public double MaxDistance { get; set; }
+
+        public double TrackVolume { get; set; }
+
         public Dictionary<string, string> Sounds { get; private set; }
 
         public ReplacerConfig()
@@ -79,6 +88,10 @@ namespace SoundReplacer.Shared
             OncePerFile = false;
             OnceWindowSeconds = 2.0;
             FadeOutSeconds = 0.0;
+            Spatial = new List<string>();
+            MinDistance = 3.0;
+            MaxDistance = 40.0;
+            TrackVolume = 1.0;
             Sounds = new Dictionary<string, string>(StringComparer.Ordinal);
         }
 
@@ -96,6 +109,11 @@ namespace SoundReplacer.Shared
             root["oncePerFile"] = OncePerFile;
             root["onceWindowSeconds"] = OnceWindowSeconds;
             root["fadeOutSeconds"] = FadeOutSeconds;
+            root["spatial"] = new List<object>(Spatial.Count);
+            foreach (string name in Spatial) ((List<object>)root["spatial"]).Add(name);
+            root["minDistance"] = MinDistance;
+            root["maxDistance"] = MaxDistance;
+            root["trackVolume"] = TrackVolume;
 
             var noTrim = new List<object>(NoTrim.Count);
             foreach (string name in NoTrim) noTrim.Add(name);
@@ -141,6 +159,9 @@ namespace SoundReplacer.Shared
             config.OncePerFile = Json.GetBool(obj, "oncePerFile", false);
             config.OnceWindowSeconds = Json.GetDouble(obj, "onceWindowSeconds", 2.0);
             config.FadeOutSeconds = Json.GetDouble(obj, "fadeOutSeconds", 0.0);
+            config.MinDistance = Json.GetDouble(obj, "minDistance", 3.0);
+            config.MaxDistance = Json.GetDouble(obj, "maxDistance", 40.0);
+            config.TrackVolume = Json.GetDouble(obj, "trackVolume", 1.0);
 
             var rawNoTrim = Json.AsArray(Json.Get(obj, "noTrim"));
             if (rawNoTrim != null)
@@ -149,6 +170,16 @@ namespace SoundReplacer.Shared
                 {
                     var name = item as string;
                     if (!string.IsNullOrEmpty(name)) config.NoTrim.Add(name.Trim());
+                }
+            }
+
+            var rawSpatial = Json.AsArray(Json.Get(obj, "spatial"));
+            if (rawSpatial != null)
+            {
+                foreach (object item in rawSpatial)
+                {
+                    var name = item as string;
+                    if (!string.IsNullOrEmpty(name)) config.Spatial.Add(name.Trim());
                 }
             }
 
@@ -282,8 +313,8 @@ namespace SoundReplacer.Shared
         public string Describe()
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "version={0}, enabled={1}, patchClipSetter={2}, matchLength={3}, matchVolume={4}, matchChannels={5}, logPlays={6}, noTrim={7}, oncePerFile={8}, fadeOut={9}, sounds={10}",
-                Version, Enabled, PatchClipSetter, MatchLength, MatchVolume, MatchChannels, LogPlays, NoTrim.Count, OncePerFile, FadeOutSeconds, Sounds.Count);
+                "version={0}, enabled={1}, patchClipSetter={2}, matchLength={3}, matchVolume={4}, matchChannels={5}, logPlays={6}, noTrim={7}, oncePerFile={8}, fadeOut={9}, spatial={10}, sounds={11}",
+                Version, Enabled, PatchClipSetter, MatchLength, MatchVolume, MatchChannels, LogPlays, NoTrim.Count, OncePerFile, FadeOutSeconds, Spatial.Count, Sounds.Count);
         }
     }
 }

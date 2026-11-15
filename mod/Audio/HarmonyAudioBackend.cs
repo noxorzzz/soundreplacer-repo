@@ -145,38 +145,59 @@ namespace SoundReplacer.Audio
         internal static class SourcePlayPatch
         {
             // ReSharper disable once UnusedParameter.Global
-            public static void Prefix(AudioSource __instance)
+            public static bool Prefix(AudioSource __instance)
             {
-                if (__instance == null) return;
+                if (__instance == null) return true;
 
                 AudioClip current = __instance.clip;
                 ObserveClip(current);
 
                 SoundReplacementManager manager = Manager;
-                if (manager == null) return;
+                if (manager == null) return true;
 
                 AudioClip replacement;
-                if (!manager.TryGet(current, out replacement)) return;
+                if (!manager.TryGet(current, out replacement)) return true;
+
+                // null + true = повтор в окне: не играем этот старт совсем,
+                // чтобы не оборвать уже звучащий трек.
+                if (replacement == null) return false;
+
+                if (manager.ShouldSpatialize(current.name))
+                {
+                    TrackHost.Play(__instance.transform.position, replacement, manager.Config, current.name);
+                    return false;
+                }
 
                 AudioPatchHelpers.AssignClip(__instance, replacement);
+                return true;
             }
         }
 
         internal static class ClipArgumentPatch
         {
-            public static void Prefix(ref AudioClip clip)
+            public static bool Prefix(AudioSource __instance, ref AudioClip clip)
             {
-                if (clip == null) return;
+                if (clip == null) return true;
 
                 ObserveClip(clip);
 
                 SoundReplacementManager manager = Manager;
-                if (manager == null) return;
+                if (manager == null) return true;
 
                 AudioClip replacement;
-                if (!manager.TryGet(clip, out replacement)) return;
+                if (!manager.TryGet(clip, out replacement)) return true;
+
+                if (replacement == null) return false;
+
+                if (manager.ShouldSpatialize(clip.name))
+                {
+                    Vector3 position = __instance != null ? __instance.transform.position : Vector3.zero;
+                    TrackHost.Play(position, replacement, manager.Config, clip.name);
+                    return false;
+                }
 
                 clip = replacement;
+                return true;
             }
         }
 
@@ -189,8 +210,12 @@ namespace SoundReplacer.Audio
                 SoundReplacementManager manager = Manager;
                 if (manager == null || !manager.PatchClipSetter) return;
 
+                // 3D-треки ставим не в клип, а на свой источник в момент Play(),
+                // поэтому сеттер для них не трогаем.
+                if (manager.ShouldSpatialize(value.name)) return;
+
                 AudioClip replacement;
-                if (!manager.TryGet(value, out replacement)) return;
+                if (!manager.TryGetForAssignment(value, out replacement) || replacement == null) return;
 
                 AudioPatchHelpers.AssignClip(__instance, replacement);
             }

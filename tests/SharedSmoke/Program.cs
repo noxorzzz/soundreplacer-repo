@@ -48,6 +48,10 @@ internal static class Smoke
         config.OncePerFile = true;
         config.OnceWindowSeconds = 3.5;
         config.FadeOutSeconds = 1.5;
+        config.Spatial.Add("extraction point alarm");
+        config.MinDistance = 4;
+        config.MaxDistance = 45;
+        config.TrackVolume = 0.8;
 
         string error;
         ReplacerConfig parsed = ReplacerConfig.FromJson(config.ToJson(), out error);
@@ -68,6 +72,10 @@ internal static class Smoke
         Check(parsed.OncePerFile, "config oncePerFile");
         Check(Math.Abs(parsed.OnceWindowSeconds - 3.5) < 0.001, "config onceWindowSeconds");
         Check(Math.Abs(parsed.FadeOutSeconds - 1.5) < 0.001, "config fadeOutSeconds");
+        Check(parsed.Spatial.Count == 1 && parsed.Spatial[0] == "extraction point alarm", "config spatial");
+        Check(Math.Abs(parsed.MinDistance - 4) < 0.001, "config minDistance");
+        Check(Math.Abs(parsed.MaxDistance - 45) < 0.001, "config maxDistance");
+        Check(Math.Abs(parsed.TrackVolume - 0.8) < 0.001, "config trackVolume");
     }
 
     private static void CatalogRoundTrip()
@@ -195,7 +203,9 @@ internal static class Smoke
 
     private static string CreateTempDirectory()
     {
-        string directory = Path.Combine(Path.GetTempPath(), "soundreplacer-smoke-" + Guid.NewGuid().ToString("N"));
+        string root = Environment.GetEnvironmentVariable("SOUNDREPLACER_SMOKE_TMP");
+        if (string.IsNullOrEmpty(root)) root = Path.GetTempPath();
+        string directory = Path.Combine(root, "soundreplacer-smoke-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
         return directory;
     }

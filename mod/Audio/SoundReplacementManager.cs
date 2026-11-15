@@ -31,7 +31,6 @@ namespace SoundReplacer.Audio
         private readonly HashSet<string> _fitted = new HashSet<string>(StringComparer.Ordinal);
         private readonly List<AudioClip> _owned = new List<AudioClip>();
         private readonly Dictionary<string, float> _lastStartBySource = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
-        private AudioClip _silent;
         private readonly object _sync = new object();
 
         public SoundReplacementManager(ReplacerConfig config, string pluginDirectory)
@@ -115,7 +114,9 @@ namespace SoundReplacer.Audio
 
                 if (ShouldSuppress(name))
                 {
-                    replacement = Silent;
+                    // true + null = «этот старт надо пропустить целиком»:
+                    // патч не станет присваивать клип, и уже играющий трек не оборвётся.
+                    replacement = null;
                     return true;
                 }
 
@@ -150,20 +151,6 @@ namespace SoundReplacer.Audio
             return false;
         }
 
-        private AudioClip Silent
-        {
-            get
-            {
-                if (_silent != null) return _silent;
-
-                const int frames = 4410; // 0.1 c при 44.1 кГц
-                _silent = AudioClip.Create("SR_silent", frames, 1, 44100, false);
-                _silent.SetData(new float[frames], 0);
-                _owned.Add(_silent);
-                return _silent;
-            }
-        }
-
         public bool TryGetByName(string originalName, out AudioClip replacement)
         {
             replacement = null;
@@ -176,9 +163,49 @@ namespace SoundReplacer.Audio
 
                 if (ShouldSuppress(originalName))
                 {
-                    replacement = Silent;
+                    replacement = null;
                     return true;
                 }
+
+                replacement = found;
+                return true;
+            }
+        }
+
+        public ReplacerConfig Config
+        {
+            get { return _config; }
+        }
+
+        /// <summary>Трек для этого имени играем на отдельном 3D-источнике.</summary>
+        public bool ShouldSpatialize(string name)
+        {
+            if (string.IsNullOrEmpty(name) || _config.Spatial.Count == 0) return false;
+
+            for (int i = 0; i < _config.Spatial.Count; i++)
+            {
+                if (string.Equals(_config.Spatial[i], name, StringComparison.OrdinalIgnoreCase)) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Подмена при присвоении клипа (set_clip): окно повторов здесь не расходуется,
+        /// иначе первое же Play() после set_clip было бы заглушено.
+        /// </summary>
+        public bool TryGetForAssignment(AudioClip original, out AudioClip replacement)
+        {
+            replacement = null;
+            if (original == null || !_config.Enabled) return false;
+
+            string name = original.name;
+            if (string.IsNullOrEmpty(name)) return false;
+
+            lock (_sync)
+            {
+                AudioClip found;
+                if (!_replacements.TryGetValue(name, out found) || found == null) return false;
+                if (ReferenceEquals(found, original)) return false;
 
                 replacement = found;
                 return true;
@@ -195,7 +222,6 @@ namespace SoundReplacer.Audio
                 _fitted.Clear();
                 _owned.Clear();
                 _lastStartBySource.Clear();
-                _silent = null;
             }
 
             if (!_config.Enabled)
@@ -296,7 +322,6 @@ namespace SoundReplacer.Audio
                 _owned.Clear();
                 _fitted.Clear();
                 _lastStartBySource.Clear();
-                _silent = null;
             }
 
             foreach (AudioClip clip in clips)
