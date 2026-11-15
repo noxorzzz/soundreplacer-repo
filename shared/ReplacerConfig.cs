@@ -51,6 +51,15 @@ namespace SoundReplacer.Shared
         /// </summary>
         public List<string> NoTrim { get; private set; }
 
+        /// <summary>
+        /// Не запускать тот же файл повторно в течение <see cref="OnceWindowSeconds"/>:
+        /// игра иногда проигрывает один джингл несколько раз подряд (local/global, 3 гудка),
+        /// и длинный трек начинался бы трижды.
+        /// </summary>
+        public bool OncePerFile { get; set; }
+
+        public double OnceWindowSeconds { get; set; }
+
         public Dictionary<string, string> Sounds { get; private set; }
 
         public ReplacerConfig()
@@ -64,6 +73,8 @@ namespace SoundReplacer.Shared
             MatchChannels = true;
             LogPlays = false;
             NoTrim = new List<string>();
+            OncePerFile = false;
+            OnceWindowSeconds = 2.0;
             Sounds = new Dictionary<string, string>(StringComparer.Ordinal);
         }
 
@@ -78,6 +89,8 @@ namespace SoundReplacer.Shared
             root["matchVolume"] = MatchVolume;
             root["matchChannels"] = MatchChannels;
             root["logPlays"] = LogPlays;
+            root["oncePerFile"] = OncePerFile;
+            root["onceWindowSeconds"] = OnceWindowSeconds;
 
             var noTrim = new List<object>(NoTrim.Count);
             foreach (string name in NoTrim) noTrim.Add(name);
@@ -120,6 +133,8 @@ namespace SoundReplacer.Shared
             config.MatchVolume = Json.GetBool(obj, "matchVolume", true);
             config.MatchChannels = Json.GetBool(obj, "matchChannels", true);
             config.LogPlays = Json.GetBool(obj, "logPlays", false);
+            config.OncePerFile = Json.GetBool(obj, "oncePerFile", false);
+            config.OnceWindowSeconds = Json.GetDouble(obj, "onceWindowSeconds", 2.0);
 
             var rawNoTrim = Json.AsArray(Json.Get(obj, "noTrim"));
             if (rawNoTrim != null)
@@ -261,8 +276,8 @@ namespace SoundReplacer.Shared
         public string Describe()
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "version={0}, enabled={1}, patchClipSetter={2}, matchLength={3}, matchVolume={4}, matchChannels={5}, logPlays={6}, noTrim={7}, sounds={8}",
-                Version, Enabled, PatchClipSetter, MatchLength, MatchVolume, MatchChannels, LogPlays, NoTrim.Count, Sounds.Count);
+                "version={0}, enabled={1}, patchClipSetter={2}, matchLength={3}, matchVolume={4}, matchChannels={5}, logPlays={6}, noTrim={7}, oncePerFile={8}, sounds={9}",
+                Version, Enabled, PatchClipSetter, MatchLength, MatchVolume, MatchChannels, LogPlays, NoTrim.Count, OncePerFile, Sounds.Count);
         }
     }
 }

@@ -45,6 +45,8 @@ internal static class Smoke
         config.MatchVolume = false;
         config.LogPlays = true;
         config.NoTrim.Add("extraction point jingle complete 2 local");
+        config.OncePerFile = true;
+        config.OnceWindowSeconds = 3.5;
 
         string error;
         ReplacerConfig parsed = ReplacerConfig.FromJson(config.ToJson(), out error);
@@ -62,6 +64,8 @@ internal static class Smoke
         Check(parsed.MatchVolume == false, "config matchVolume respected");
         Check(parsed.LogPlays, "config logPlays");
         Check(parsed.NoTrim.Count == 1 && parsed.NoTrim[0] == "extraction point jingle complete 2 local", "config noTrim");
+        Check(parsed.OncePerFile, "config oncePerFile");
+        Check(Math.Abs(parsed.OnceWindowSeconds - 3.5) < 0.001, "config onceWindowSeconds");
     }
 
     private static void CatalogRoundTrip()

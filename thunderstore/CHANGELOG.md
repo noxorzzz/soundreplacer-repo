@@ -1,3 +1,7 @@
+# 1.3.0
+
+- `oncePerFile` / `onceWindowSeconds`: repeated starts of the same file inside the window are muted, so a long track does not restart three times when the game fires the jingle several times (local + global, quota honks).
+
 # 1.2.0
 
 - `noTrim`: names excluded from trimming to the original length — a full track instead of a short jingle (e.g. replacing the quota honks).

@@ -30,6 +30,8 @@ namespace SoundReplacer.Audio
         private readonly List<string> _failures = new List<string>();
         private readonly HashSet<string> _fitted = new HashSet<string>(StringComparer.Ordinal);
         private readonly List<AudioClip> _owned = new List<AudioClip>();
+        private readonly Dictionary<string, float> _lastStartBySource = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
+        private AudioClip _silent;
         private readonly object _sync = new object();
 
         public SoundReplacementManager(ReplacerConfig config, string pluginDirectory)
@@ -110,8 +112,54 @@ namespace SoundReplacer.Audio
                     }
                 }
 
+                if (ShouldSuppress(name))
+                {
+                    replacement = Silent;
+                    return true;
+                }
+
                 replacement = found;
                 return true;
+            }
+        }
+
+        /// <summary>
+        /// Игра иногда стартует один и тот же джингл несколько раз подряд
+        /// (local + global, три гудка). Для длинного трека это три наложения —
+        /// поэтому второй и следующие старты в окне глушим.
+        /// </summary>
+        private bool ShouldSuppress(string name)
+        {
+            if (!_config.OncePerFile) return false;
+
+            string source;
+            if (!_sources.TryGetValue(name, out source) || string.IsNullOrEmpty(source)) return false;
+
+            float now = Time.unscaledTime;
+            float last;
+            if (_lastStartBySource.TryGetValue(source, out last) &&
+                now - last < (float)_config.OnceWindowSeconds)
+            {
+                ModLog.Info("повторный старт '" + name + "' заглушён (окно " +
+                            _config.OnceWindowSeconds.ToString("0.0") + " c)");
+                return true;
+            }
+
+            _lastStartBySource[source] = now;
+            return false;
+        }
+
+        private AudioClip Silent
+        {
+            get
+            {
+                if (_silent != null) return _silent;
+
+                const int frames = 4410; // 0.1 c при 44.1 кГц
+                _silent = AudioClip.Create("SR_silent", frames, 1, 44100, false);
+                _silent.SetData(new float[frames], 0);
+                _owned.Add(_silent);
+                return _silent;
             }
         }
 
@@ -122,7 +170,17 @@ namespace SoundReplacer.Audio
 
             lock (_sync)
             {
-                return _replacements.TryGetValue(originalName, out replacement) && replacement != null;
+                AudioClip found;
+                if (!_replacements.TryGetValue(originalName, out found) || found == null) return false;
+
+                if (ShouldSuppress(originalName))
+                {
+                    replacement = Silent;
+                    return true;
+                }
+
+                replacement = found;
+                return true;
             }
         }
 
@@ -135,6 +193,8 @@ namespace SoundReplacer.Audio
                 _failures.Clear();
                 _fitted.Clear();
                 _owned.Clear();
+                _lastStartBySource.Clear();
+                _silent = null;
             }
 
             if (!_config.Enabled)
@@ -234,6 +294,8 @@ namespace SoundReplacer.Audio
                 _sources.Clear();
                 _owned.Clear();
                 _fitted.Clear();
+                _lastStartBySource.Clear();
+                _silent = null;
             }
 
             foreach (AudioClip clip in clips)
