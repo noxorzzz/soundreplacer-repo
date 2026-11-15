@@ -1,15 +1,59 @@
-# SoundReplacer — замена звуков в R.E.P.O.
+<div align="center">
 
-> Репозиторий: [github.com/noxorzzz/soundreplacer-repo](https://github.com/noxorzzz/soundreplacer-repo) · лицензия MIT · CI: `shared tests + WinForms app`
+<img src="docs/banner.png" alt="SoundReplacer — замена звуков в R.E.P.O." width="100%">
 
-Две независимые части, связанные **только файловой системой**:
+# SoundReplacer
 
-| Часть | Что делает | Технологии |
-|---|---|---|
-| **SoundReplacer** (мод) | читает `config.json`, грузит `.ogg`/`.wav`, подменяет `AudioClip` по имени на старте проигрывания, собирает `catalog.json` | BepInEx 5, Harmony, .NET Framework 4.7.2 |
-| **SoundReplacer.App** (внешнее приложение) | показывает список звуков игры, даёт выбрать файл на каждый звук, пишет `config.json`, копирует файлы в `Sounds/`, умеет всё сбросить | WinForms, .NET 10 (LTS) |
+**Замена звуков в R.E.P.O. без правки файлов игры.**
+Мод на BepInEx 5 + Harmony подменяет `AudioClip` по имени, приложение на WinForms даёт выбрать файлы, разложить их в `Sounds/` и записать `config.json`.
 
-> ⚠️ **Главное ограничение: замена клиентская.** В мультиплеере заменённые звуки слышат только те игроки, у которых установлен тот же мод и лежат те же файлы. Синхронизации нет: хост ничего не раздаёт, «ванильные» игроки слышат оригинал. Подробнее — раздел [«Мультиплеер»](#8-мультиплеер--важно).
+[![CI](https://github.com/noxorzzz/soundreplacer-repo/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/noxorzzz/soundreplacer-repo/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-3DDC97)](LICENSE)
+![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)
+![BepInEx](https://img.shields.io/badge/BepInEx-5.4.x-6F42C1)
+![R.E.P.O.](https://img.shields.io/badge/R.E.P.O.-Unity%202022.3-FF7A45)
+![Windows](https://img.shields.io/badge/Windows-x64-0EA5E9?logo=windows&logoColor=white)
+
+</div>
+
+> [!WARNING]
+> **Главное ограничение: замена клиентская.** В мультиплеере заменённые звуки слышат только те игроки, у которых установлен тот же мод и лежат те же файлы. Синхронизации нет: хост ничего не раздаёт, «ванильные» игроки слышат оригинал. Подробнее — [раздел 8](#8-мультиплеер--важно).
+
+## Быстрый старт
+
+| # | Шаг |
+|---|---|
+| 1 | Установите **BepInEx 5.4.x x64** в папку игры (рядом с `REPO.exe`) |
+| 2 | Положите `SoundReplacer.dll` в `BepInEx/plugins/SoundReplacer/` |
+| 3 | Запустите игру и закройте — мод соберёт `catalog.json` |
+| 4 | Запустите **SoundReplacer.App**, выберите файлы → **«Применить»** |
+| 5 | Перезапустите игру |
+
+## Возможности
+
+| Мод | Приложение |
+|---|---|
+| Подмена `AudioClip` по имени через 9 точек `AudioSource` | Список звуков из каталога, сортировка по частоте проигрывания |
+| `.ogg` (Vorbis) и `.wav` (PCM 8–32 бит, float) | Выбор файла на каждый звук, «Очистить», «Сбросить» |
+| Битый или отсутствующий файл → лог и оригинал, без падений | Поиск игры: процесс → Steam-библиотеки → вручную |
+| `catalog.json` со счётчиком проигрываний | Копирование в `Sounds/` с хэшем, атомарная запись конфига |
+| Свой лог с ротацией + `LogOutput.log` | Предупреждение о запущенной игре и перезапуске |
+
+## Как это работает
+
+<p align="center"><img src="docs/architecture.png" alt="Схема работы SoundReplacer" width="100%"></p>
+
+Две части связаны только файловой системой: никаких сетевых вызовов, общего процесса и вызовов методов мода из приложения.
+
+### Содержание
+
+- [Установка](#5-установка)
+- [Сборка](#6-сборка)
+- [config.json](#7-configjson)
+- [Мультиплеер](#8-мультиплеер--важно)
+- [Диагностика](#10-диагностика)
+- [Зависимости](#13-зависимости)
+- [Что проверено](#14-что-проверено-а-что-нет)
 
 ---
 
@@ -79,6 +123,7 @@ R.E.P.O mod/
 ├─ SoundReplacer.sln                    # app + mod + tests
 ├─ .gitattributes
 ├─ .github/workflows/ci.yml             # тесты + сборка приложения
+├─ docs/                                # banner.png, architecture.png для README
 ├─ tests/SharedSmoke/                   # 26 дымовых проверок shared-слоя
 ├─ shared/                              # общий слой мода и приложения
 │  ├─ Json.cs                           # свой мини-JSON (без NuGet и без конфликтов DLL)
