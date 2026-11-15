@@ -52,6 +52,11 @@ internal static class Smoke
         config.MinDistance = 4;
         config.MaxDistance = 45;
         config.TrackVolume = 0.8;
+        config.Echo = true;
+        config.EchoDelayMs = 420;
+        config.EchoDecayRatio = 0.35;
+        config.EchoWetMix = 0.4;
+        config.EchoDryMix = 0.9;
 
         string error;
         ReplacerConfig parsed = ReplacerConfig.FromJson(config.ToJson(), out error);
@@ -76,6 +81,11 @@ internal static class Smoke
         Check(Math.Abs(parsed.MinDistance - 4) < 0.001, "config minDistance");
         Check(Math.Abs(parsed.MaxDistance - 45) < 0.001, "config maxDistance");
         Check(Math.Abs(parsed.TrackVolume - 0.8) < 0.001, "config trackVolume");
+        Check(parsed.Echo, "config echo");
+        Check(Math.Abs(parsed.EchoDelayMs - 420) < 0.001, "config echoDelayMs");
+        Check(Math.Abs(parsed.EchoDecayRatio - 0.35) < 0.001, "config echoDecayRatio");
+        Check(Math.Abs(parsed.EchoWetMix - 0.4) < 0.001, "config echoWetMix");
+        Check(Math.Abs(parsed.EchoDryMix - 0.9) < 0.001, "config echoDryMix");
     }
 
     private static void CatalogRoundTrip()

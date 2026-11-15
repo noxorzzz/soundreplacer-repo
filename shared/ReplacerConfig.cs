@@ -72,6 +72,21 @@ namespace SoundReplacer.Shared
 
         public double TrackVolume { get; set; }
 
+        /// <summary>Эхо для 3D-трека (AudioEchoFilter на собственном источнике).</summary>
+        public bool Echo { get; set; }
+
+        /// <summary>Задержка эха, миллисекунды (10–5000).</summary>
+        public double EchoDelayMs { get; set; }
+
+        /// <summary>Сколько затухает каждое повторение (0–0.9).</summary>
+        public double EchoDecayRatio { get; set; }
+
+        /// <summary>Доля «мокрого» (эхового) сигнала (0–1).</summary>
+        public double EchoWetMix { get; set; }
+
+        /// <summary>Доля «сухого» сигнала (0–1).</summary>
+        public double EchoDryMix { get; set; }
+
         public Dictionary<string, string> Sounds { get; private set; }
 
         public ReplacerConfig()
@@ -92,6 +107,11 @@ namespace SoundReplacer.Shared
             MinDistance = 3.0;
             MaxDistance = 40.0;
             TrackVolume = 1.0;
+            Echo = false;
+            EchoDelayMs = 500.0;
+            EchoDecayRatio = 0.5;
+            EchoWetMix = 0.5;
+            EchoDryMix = 1.0;
             Sounds = new Dictionary<string, string>(StringComparer.Ordinal);
         }
 
@@ -114,6 +134,11 @@ namespace SoundReplacer.Shared
             root["minDistance"] = MinDistance;
             root["maxDistance"] = MaxDistance;
             root["trackVolume"] = TrackVolume;
+            root["echo"] = Echo;
+            root["echoDelayMs"] = EchoDelayMs;
+            root["echoDecayRatio"] = EchoDecayRatio;
+            root["echoWetMix"] = EchoWetMix;
+            root["echoDryMix"] = EchoDryMix;
 
             var noTrim = new List<object>(NoTrim.Count);
             foreach (string name in NoTrim) noTrim.Add(name);
@@ -162,6 +187,11 @@ namespace SoundReplacer.Shared
             config.MinDistance = Json.GetDouble(obj, "minDistance", 3.0);
             config.MaxDistance = Json.GetDouble(obj, "maxDistance", 40.0);
             config.TrackVolume = Json.GetDouble(obj, "trackVolume", 1.0);
+            config.Echo = Json.GetBool(obj, "echo", false);
+            config.EchoDelayMs = Json.GetDouble(obj, "echoDelayMs", 500.0);
+            config.EchoDecayRatio = Json.GetDouble(obj, "echoDecayRatio", 0.5);
+            config.EchoWetMix = Json.GetDouble(obj, "echoWetMix", 0.5);
+            config.EchoDryMix = Json.GetDouble(obj, "echoDryMix", 1.0);
 
             var rawNoTrim = Json.AsArray(Json.Get(obj, "noTrim"));
             if (rawNoTrim != null)

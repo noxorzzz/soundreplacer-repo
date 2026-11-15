@@ -1,3 +1,7 @@
+# 1.6.0
+
+- Echo on the 3D track: `echo`, `echoDelayMs`, `echoDecayRatio`, `echoWetMix`, `echoDryMix`. An `AudioEchoFilter` is attached only to the track's own source, so nothing else changes.
+
 # 1.5.0
 
 - Fixed: stereo files were cut exactly in half — `AudioClip.samples` is frames per channel, the code divided it by the channel count.

@@ -14,6 +14,7 @@ Client-side BepInEx 5 + Harmony mod: it swaps the `AudioClip` by name at play ti
 - `oncePerFile`: the same file is not restarted within `onceWindowSeconds`, so a long track is not stacked three times when the game fires the jingle repeatedly.
 - `fadeOutSeconds`: smooth fade-out at the end of the replaced clip.
 - `spatial`: the track plays on its own 3D source at the event position — louder up close, quieter with distance (`minDistance`, `maxDistance`, `trackVolume`). It is unaffected by the game re-triggering the original sound.
+- `echo`: optional `AudioEchoFilter` on that source (`echoDelayMs`, `echoDecayRatio`, `echoWetMix`, `echoDryMix`) — the track gets an echo tail, other sounds stay untouched.
 - `logPlays`: every played clip appears in the log with its length and channel count.
 - `catalog.json` with real clip names, play counts, original `length` and `channels`, updated while you play.
 - Own log with rotation plus `BepInEx/LogOutput.log`.

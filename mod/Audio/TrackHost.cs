@@ -37,12 +37,26 @@ namespace SoundReplacer.Audio
 
                 source.Play();
 
+                float tailSeconds = 0.5f;
+                if (config.Echo)
+                {
+                    AudioEchoFilter echo = go.AddComponent<AudioEchoFilter>();
+                    echo.delay = Mathf.Clamp((float)config.EchoDelayMs, 10f, 5000f);
+                    echo.decayRatio = Mathf.Clamp((float)config.EchoDecayRatio, 0f, 0.95f);
+                    echo.wetMix = Mathf.Clamp01((float)config.EchoWetMix);
+                    echo.dryMix = Mathf.Clamp01((float)config.EchoDryMix);
+
+                    // Эхо затихает не мгновенно: держим объект, пока не затухнут повторы.
+                    tailSeconds += echo.delay * 0.001f * 6f;
+                }
+
                 // Источник убираем чуть позже конца клипа (затухание уже в сэмплах).
-                Object.Destroy(go, clip.length + 0.5f);
+                Object.Destroy(go, clip.length + tailSeconds);
 
                 ModLog.Info(string.Format(
-                    "трек для '{0}': 3D-источник в {1}, дистанции {2:0.0}-{3:0.0} м, затухание есть",
-                    originalName, position, source.minDistance, source.maxDistance));
+                    "трек для '{0}': 3D-источник в {1}, дистанции {2:0.0}-{3:0.0} м{4}",
+                    originalName, position, source.minDistance, source.maxDistance,
+                    config.Echo ? ", эхо " + config.EchoDelayMs.ToString("0") + " мс" : ", без эха"));
             }
             catch (System.Exception ex)
             {

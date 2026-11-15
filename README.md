@@ -14,7 +14,7 @@
 ![R.E.P.O.](https://img.shields.io/badge/R.E.P.O.-Unity%202022.3-FF7A45)
 ![Windows](https://img.shields.io/badge/Windows-x64-0EA5E9?logo=windows&logoColor=white)
 [![Release](https://img.shields.io/github/v/release/noxorzzz/soundreplacer-repo?label=release&color=3DDC97)](https://github.com/noxorzzz/soundreplacer-repo/releases/latest)
-[![Thunderstore](https://img.shields.io/badge/Thunderstore-1.5.0-23A2C4)](https://thunderstore.io/c/repo/p/noxorzzz/SoundReplacer/)
+[![Thunderstore](https://img.shields.io/badge/Thunderstore-1.6.0-23A2C4)](https://thunderstore.io/c/repo/p/noxorzzz/SoundReplacer/)
 
 </div>
 
@@ -315,6 +315,11 @@ dotnet publish .\app\SoundReplacer.App.csproj -c Release -r win-x64 -p:SelfConta
   "minDistance": 3.0,
   "maxDistance": 40.0,
   "trackVolume": 1.0,
+  "echo": true,
+  "echoDelayMs": 450,
+  "echoDecayRatio": 0.45,
+  "echoWetMix": 0.35,
+  "echoDryMix": 1.0,
   "sounds": {
     "Sfx - Item Break": "Sounds/Sfx_Item_Break_1a2b3c4d5e6f7a8b.ogg",
     "Music - Menu": "Sounds/Music_Menu_9f8e7d6c5b4a3921.wav",
@@ -341,6 +346,11 @@ dotnet publish .\app\SoundReplacer.App.csproj -c Release -r win-x64 -p:SelfConta
 | `minDistance` | number | `3.0` | дистанция полной громкости 3D-трека, метры |
 | `maxDistance` | number | `40.0` | дистанция, дальше которой трек не слышно, метры |
 | `trackVolume` | number | `1.0` | общая громкость 3D-трека (0–1) |
+| `echo` | bool | `false` | эхо на 3D-треке (`AudioEchoFilter` на своём источнике) |
+| `echoDelayMs` | number | `500` | задержка эха, миллисекунды |
+| `echoDecayRatio` | number | `0.5` | насколько затухает каждое повторение (0–0.95) |
+| `echoWetMix` | number | `0.5` | доля эхового сигнала |
+| `echoDryMix` | number | `1.0` | доля сухого сигнала |
 | `sounds` | object | `{}` | маппинг `точное имя AudioClip → путь к .ogg/.wav` |
 
 Правила:

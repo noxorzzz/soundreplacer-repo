@@ -2,6 +2,12 @@
 
 Все значимые изменения — здесь. Формат: [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/), версии — [SemVer](https://semver.org/lang/ru/).
 
+## [1.6.0] — 2026-11-15
+
+### Добавлено
+
+- Эхо для 3D-трека: `echo`, `echoDelayMs`, `echoDecayRatio`, `echoWetMix`, `echoDryMix`. Вешается `AudioEchoFilter` только на собственный источник трека, остальные звуки не затрагиваются.
+
 ## [1.5.0] — 2026-11-15
 
 ### Исправлено
