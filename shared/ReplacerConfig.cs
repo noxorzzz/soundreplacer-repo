@@ -42,6 +42,15 @@ namespace SoundReplacer.Shared
         /// <summary>Сводить стерео в моно, если оригинал моно: иначе 3D-панорама работает криво.</summary>
         public bool MatchChannels { get; set; }
 
+        /// <summary>Писать в лог каждый проигранный клип (имя и длину) — для поиска нужного звука.</summary>
+        public bool LogPlays { get; set; }
+
+        /// <summary>
+        /// Имена, которые НЕ обрезаются по длине оригинала (треки вместо коротких джинглов).
+        /// Пример: ["extraction point jingle complete 2 local"].
+        /// </summary>
+        public List<string> NoTrim { get; private set; }
+
         public Dictionary<string, string> Sounds { get; private set; }
 
         public ReplacerConfig()
@@ -53,6 +62,8 @@ namespace SoundReplacer.Shared
             MatchLength = true;
             MatchVolume = true;
             MatchChannels = true;
+            LogPlays = false;
+            NoTrim = new List<string>();
             Sounds = new Dictionary<string, string>(StringComparer.Ordinal);
         }
 
@@ -66,6 +77,11 @@ namespace SoundReplacer.Shared
             root["matchLength"] = MatchLength;
             root["matchVolume"] = MatchVolume;
             root["matchChannels"] = MatchChannels;
+            root["logPlays"] = LogPlays;
+
+            var noTrim = new List<object>(NoTrim.Count);
+            foreach (string name in NoTrim) noTrim.Add(name);
+            root["noTrim"] = noTrim;
 
             var sounds = new Dictionary<string, object>(StringComparer.Ordinal);
             foreach (KeyValuePair<string, string> pair in Sounds.OrderBy(p => p.Key, StringComparer.Ordinal))
@@ -103,6 +119,17 @@ namespace SoundReplacer.Shared
             config.MatchLength = Json.GetBool(obj, "matchLength", true);
             config.MatchVolume = Json.GetBool(obj, "matchVolume", true);
             config.MatchChannels = Json.GetBool(obj, "matchChannels", true);
+            config.LogPlays = Json.GetBool(obj, "logPlays", false);
+
+            var rawNoTrim = Json.AsArray(Json.Get(obj, "noTrim"));
+            if (rawNoTrim != null)
+            {
+                foreach (object item in rawNoTrim)
+                {
+                    var name = item as string;
+                    if (!string.IsNullOrEmpty(name)) config.NoTrim.Add(name.Trim());
+                }
+            }
 
             object rawSounds = Json.Get(obj, "sounds");
             if (rawSounds != null)
@@ -234,8 +261,8 @@ namespace SoundReplacer.Shared
         public string Describe()
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "version={0}, enabled={1}, patchClipSetter={2}, matchLength={3}, matchVolume={4}, matchChannels={5}, sounds={6}",
-                Version, Enabled, PatchClipSetter, MatchLength, MatchVolume, MatchChannels, Sounds.Count);
+                "version={0}, enabled={1}, patchClipSetter={2}, matchLength={3}, matchVolume={4}, matchChannels={5}, logPlays={6}, noTrim={7}, sounds={8}",
+                Version, Enabled, PatchClipSetter, MatchLength, MatchVolume, MatchChannels, LogPlays, NoTrim.Count, Sounds.Count);
         }
     }
 }

@@ -43,6 +43,8 @@ internal static class Smoke
         config.Sounds["Крик игрока"] = "Sounds/крик.wav";
         config.PatchClipSetter = false;
         config.MatchVolume = false;
+        config.LogPlays = true;
+        config.NoTrim.Add("extraction point jingle complete 2 local");
 
         string error;
         ReplacerConfig parsed = ReplacerConfig.FromJson(config.ToJson(), out error);
@@ -58,6 +60,8 @@ internal static class Smoke
         Check(parsed.MatchLength, "config matchLength default true");
         Check(parsed.MatchChannels, "config matchChannels default true");
         Check(parsed.MatchVolume == false, "config matchVolume respected");
+        Check(parsed.LogPlays, "config logPlays");
+        Check(parsed.NoTrim.Count == 1 && parsed.NoTrim[0] == "extraction point jingle complete 2 local", "config noTrim");
     }
 
     private static void CatalogRoundTrip()

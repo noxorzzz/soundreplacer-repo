@@ -133,6 +133,13 @@ namespace SoundReplacer.Audio
 
             CatalogCollector catalog = Plugin.Instance.Catalog;
             if (catalog != null) catalog.Observe(clip);
+
+            SoundReplacementManager manager = Plugin.Instance.Replacements;
+            if (manager != null && manager.LogPlays)
+            {
+                ModLog.Info("играет звук: '" + clip.name + "' (" +
+                            clip.length.ToString("0.00") + " c, " + clip.channels + " кан.)");
+            }
         }
 
         internal static class SourcePlayPatch

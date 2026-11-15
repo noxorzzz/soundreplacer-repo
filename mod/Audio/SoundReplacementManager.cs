@@ -48,6 +48,22 @@ namespace SoundReplacer.Audio
             get { return _config.PatchClipSetter; }
         }
 
+        public bool LogPlays
+        {
+            get { return _config.LogPlays; }
+        }
+
+        public bool IsNoTrim(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+            foreach (string item in _config.NoTrim)
+            {
+                if (string.Equals(item, name, StringComparison.OrdinalIgnoreCase)) return true;
+            }
+
+            return false;
+        }
+
         public int Count
         {
             get { lock (_sync) return _replacements.Count; }
@@ -82,7 +98,7 @@ namespace SoundReplacer.Audio
                     AudioClip fitted = ClipFitter.Fit(
                         original,
                         found,
-                        _config.MatchLength,
+                        _config.MatchLength && !IsNoTrim(name),
                         _config.MatchVolume,
                         _config.MatchChannels);
 
